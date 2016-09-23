@@ -10,8 +10,8 @@ described in on our paper [_Fast ADMM for Semidefinite Programs with Chordal Spa
 * [Description](#Description)
 * [Quick start](#QuickStart)
 * [How to cite](#References)
-* [Licence](#Licence)
 * [Contact us](#Contacts)
+* [Licence](#Licence)
 
 
 ## Description<a name="Description"></a>
