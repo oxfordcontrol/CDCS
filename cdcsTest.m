@@ -62,10 +62,10 @@ cdcs(At,b,c,K,opts);
 
 
 % ---------------------------------------------------------------------------- %
-%                   SDPs in SDPLIB
+%                              SDPs in SDPLIB
 % ---------------------------------------------------------------------------- %
 % qap9
-fprintf('Testing a quadratic assignment problem in SDPLIB: qap9 \n');
+fprintf('Testing the SDPLIB problem qap9 \n');
 load(['examples',filesep,'qap9.mat'])
 opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
@@ -73,22 +73,17 @@ opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
 
 % mcp250-1
-fprintf('\nTesting a max cut problem in SDPLIB: mcp250-1 \n');
+fprintf('\nTesting the SDPLIB problem mcp250-1 \n');
 load(['examples',filesep,'mcp250-1.mat'])
 opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
 
-% maxG11
-fprintf('\nTesting a max cut problem in SDPLIB: maxG11 \n');
-load(['examples',filesep,'maxG11.mat'])
-opts.solver = 'primal';
-cdcs(At,b,c,K,opts);
-opts.solver = 'dual';
-cdcs(At,b,c,K,opts);
-
-
+% ---------------------------------------------------------------------------- %
+%                                   END
+% ---------------------------------------------------------------------------- %
+fprintf('\n\nCDCS was successfully tested.\n\n')
 end
 
 
