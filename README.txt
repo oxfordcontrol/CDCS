@@ -17,6 +17,7 @@ Release notes: CDCS is based on a temporary research code called ADMM-PDCP, whic
 ================================================================================
                                    CONTENTS
 ================================================================================
+
 * Description
 * Quick start
 * How to cite
@@ -50,7 +51,6 @@ Currently, CDCS only decomposes semidefinite cones characterized by a chordal
 sparsity pattern. The other supported cone types are not decomposed. 
 This means that CDCS is most suitable for large sparse semidefinite programs 
 (SDPs), although it can be used for any conic program over the supported cones.
-
 
 
 ================================================================================
@@ -110,10 +110,10 @@ A selection of BibTex styles that support arXiv preprints can be found at
 http://arxiv.org/hypertex/bibstyles/
 
 
-
 ================================================================================
                                  CONTACT US
 ================================================================================
+
 To contact us about CDCS, suggest improvements and report bugs, email:
 Giovanni Fantuzzi: gf910@ic.ac.uk
 Yang Zheng	     : yang.zheng@eng.ox.ac.uk
@@ -135,3 +135,8 @@ PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along 
 with CDCS; if not, write to the Free Software Foundation, Inc., 51 Franklin St, 
 Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+================================================================================
+                               END OF README
+================================================================================
