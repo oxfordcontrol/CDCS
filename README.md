@@ -91,7 +91,7 @@ If you find CDCS useful, please cite:
     year         = 2016
 }
 ```
-
+A selection of BibTex styles that support arXiv preprints can be found [here](http://arxiv.org/hypertex/bibstyles/).
 ## Contact us<a name="Contacts"></a>
 To contact us about CDCS, suggest improvements and report bugs, email either [Giovanni Fantuzzi](mailto:gf910@ic.ac.uk?Subject=CDCS) or [Yang Zheng](mailto:yang.zheng@eng.ox.ac.uk?Subject=CDCS).
 
