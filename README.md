@@ -3,10 +3,12 @@
 CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB&reg; solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM) 
 described in on our paper [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v1.pdf).
 
+**Current version:** 1.0
+
+
 ## Contents
 * [Description](#Description)
 * [Quick start](#QuickStart)
-* [Planned features](#PlannedFeats)
 * [How to cite](#References)
 * [Licence](#Licence)
 * [Contact us](#Contacts)
@@ -73,9 +75,25 @@ you have any suggestions for improvement, or find any bugs, feel free to [contac
 
 ## How to cite<a name="References"></a>
 
-If you find ADMM-PDCP useful, please cite:
+If you find CDCS useful, please cite:
 
-1. Y. Zheng, G. Fantuzzi, A. Papachristodoulou, P. J. Goulart, A. Wynn, _Fast ADMM for Semidefinite Programs with Chordal Sparsity_, [arXiv:1609.06068 [math.OC]](https://arxiv.org/pdf/1609.06068v1.pdf)
+```
+@article{ZFPGW2016,
+	archivePrefix = {arXiv},
+	eprint = {1609.06068v1},
+	primaryClass = "math-OC",
+	author = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
+	title = {{Fast ADMM for Semidefinite Programs with Chordal Sparsity}}
+	}
+	
+@misc{CDCS,
+    author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
+    title        = {{CDCS}: Cone Decomposition Conic Solver, version 1.0},
+    howpublished = {\url{https://github.com/giofantuzzi/CDCS}},
+    month        = Sep,
+    year         = 2016
+}
+```
 
 ## Contact us<a name="Contacts"></a>
 To contact us about ADMM-PDCP, suggest improvements and report bugs, email
@@ -83,7 +101,7 @@ To contact us about ADMM-PDCP, suggest improvements and report bugs, email
 * yang.zheng[at]eng.ox.ac.uk	(Yang Zheng)
 
 
-## Licence
+## Licence<a name="Licence"></a>
 
 CDCS is free software; you can redistribute it and/or modify it under the terms 
 of the GNU Lesser General Public Licence (LGPL) as published by the Free Software
