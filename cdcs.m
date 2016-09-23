@@ -1,18 +1,18 @@
-function [x,y,z,info] = admmPDCP(At,b,c,K,userOpts,initVars)
+function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 
-% ADMMPDCP.m
+% CDCS
 %
 % Syntax:
 %
-% [x,y,info] = ADMMPDCP(At,b,c,K,opts,initVars)
+% [x,y,z,info] = CDCS(At,b,c,K,opts)
 %
 % Solve a sparse conic program using chordal decomposition for the semidefinite
-% cones and ADMM. ADMMPDCP solves the primal (P) or dual (D) standard forms of
+% cones and ADMM. CDCS solves the primal (P) or dual (D) standard forms of
 % the conic problem,
 %
 %         min <c,x>                             min -<b,y>
-%   (P)   s.t. Ax = b,                  (D)     s.t. A^Ty - c = s
-%         x \in K                                    s \in K*
+%   (P)   s.t. Ax = b,                  (D)     s.t. A^Ty - c = z
+%         x \in K                               z \in K*
 %
 % where A,b and c are the problem date and K is the cone (K* is the dual cone).
 % The standard form to be solved is specified by the "solver" field of the
@@ -27,27 +27,28 @@ function [x,y,z,info] = admmPDCP(At,b,c,K,userOpts,initVars)
 %   opts.chordalize = 1 (default): split the data equally between the cliques
 %   opts.chordalize = 2          : assign data to one clique only
 %
-% <a href="matlab:help('admmPDCPopts')">Click here for a complete list of options</a>.
+% <a href="matlab:help('cdcsOpts')">Click here for a complete list of options</a>.
 %
 % The output structure 'info' contains the following information:
 %
-% info.feas: - 0: all good 
-%            - 1: the maximum number of iterations has been reached
-%            - 2: the algorithm finished, but the positive matrix completion
-%                 algorithm threw an error
+% info.feas: - 0: CDCS terminated succesfully 
+%            - 1: the maximum number of iterations was reached
+%            - 2: the ADMM iterations terminated succesfully, but the positive 
+%                 matrix completion algorithm threw an error
 % info.iter: number of iterations
 % info.cost: terminal cost
 % info.pres: terminal primal ADMM residual
 % info.dres: terminal dual ADMM residual
 % info.time: some timing information (setup, ADMM iterations, cleanup, total)
+%
+% See also CDCSOPTS
+
 
 % UNDOCUMENTED OPTION:
 % An initial guess for the variables used in the decomposed problem can be
 % specified using the input "initVars". The variables should be specified in the
-% same format as the output structure "vars" (please run a simple example to see
-% how this is structured).
-%
-% See also ADMMPDCPOPTS, YALMIP2ADMMPDCP
+% same format as the internal variables - check ./private/makeVariables.m.
+
 
 % Copyright: G. Fantuzzi [1], Y. Zheng [2], P. Goulart [2],
 %            A. Papachristodoulou [2], A. Wynn [1],
@@ -58,11 +59,12 @@ function [x,y,z,info] = admmPDCP(At,b,c,K,userOpts,initVars)
 % [2] Department of Engineering Science, University of Oxford, Parks Road,
 %     OX1 3PJ, Oxford, UK
 
+
 %============================================
 % Solver options
 %============================================
 tstart = tic;
-opts = admmPDCPopts;
+opts = cdcsOpts;
 
 
 %============================================
@@ -82,10 +84,10 @@ end
 if opts.verbose
     myline1 = [repmat('=',1,64),'\n'];
     fprintf(myline1)
-    fprintf('Sparse conic ADMM by G. Fantuzzi, Y. Zheng -- v1.0\n')
+    fprintf('CDCS by G. Fantuzzi, Y. Zheng -- v1.0\n')
     fprintf(myline1)
     %fprintf('Using method %i for the %s standard form.\n',opts.method,opts.solver)
-    fprintf('Initializing ADMM solver...')
+    fprintf('Initializing CDCS...')
 end
 
 % start timing

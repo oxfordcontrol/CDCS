@@ -10,11 +10,6 @@ end
 % Sort out variables not in SDP cones
 nonSDP = K.f + K.l + sum(K.q);
 nonSDPind = (1:nonSDP)';
-% if K.l + sum(K.q)>0
-%     nonSDPind = (K.f+1:nonSDP-K.f)';
-% else
-%     nonSDPind = [];
-% end
 
 
 % If have SDP variables to decompose
@@ -67,16 +62,7 @@ if ~isempty(K.s) && any(K.s~=0)
         nnzind = find(svec(Blk));
         usedvars = [usedvars; nnzind+nonSDP+count];
         
-        
-        
-%         % OLD
-%         Blk = chordalExt(Blk);                               % chordal extension
-%         nnzind = find(svec(double(Blk)));
-%         keeprow = [keeprow; nnzind+nonSDP+count]; 
-%         % Chordal decomposition
-%         MCO = prim(Blk);                   % Maximal cliques
-%         P = size(MCO,2);                         % no. of maximal cliques
-        
+                
         % Indexing to extract local submatrices & split cone
         E = cell(P,1);
         ind = cell(P,1);
@@ -90,9 +76,6 @@ if ~isempty(K.s) && any(K.s~=0)
             rw = Position(:);
             cl = Position'; cl = cl(:);
             lti = rw>=cl;                        % lower triangular indices
-%             tmp = rw(~lti);                      % copy variable to swap
-%             rw(~lti) = cl(~lti);                 % row indices
-%             cl(~lti) = tmp;                      % column indices
             rw = rw(lti);
             cl = cl(lti);
             ind{j} = rw+(K.s(i)-cl./2).*(cl-1); % linear indices in svec(X)
@@ -111,7 +94,7 @@ if ~isempty(K.s) && any(K.s~=0)
     
     %--------------------------------------------
     % Remove rows from At, C  corresponding to variables that can be dropped
-    % according to the aggregate sparsity pattern in isChordal
+    % according to the aggregate sparsity pattern in SP
     %--------------------------------------------
     K.s      = horzcat(s{:});
     usedvars = [(1:nonSDP)';usedvars];

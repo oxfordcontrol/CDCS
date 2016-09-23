@@ -1,6 +1,6 @@
 function [X,others] = updateX(X,Y,Z,rho,others,Ech,K,projAffine,opts)
 
-% UPDATEX(X,Y,Z,rho,Ech,K,projX)
+% UPDATEX(X,Y,Z,rho,others,Ech,K,projAffine,opts)
 % Update block X for sparse conic ADMM solver: a projection on affine
 % constraints
 

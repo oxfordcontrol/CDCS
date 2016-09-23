@@ -1,5 +1,6 @@
 function [varargout] = makeConeVariables(K)
 
+% Make conic variables
 varargout = repmat({{}},[1 nargout]);
 shift = 0;
 

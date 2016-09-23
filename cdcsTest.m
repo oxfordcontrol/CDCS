@@ -1,40 +1,15 @@
-% Test admmPDCP
+function cdcsTest
 
-function admmPDCPTest
+% CDCSTEST
+%
+% Run some example to test CDCS.
+%
+% See also CDCS
 
 % Preliminaries
 clc;
-opts.maxIter = 1e4;
-opts.relTol = 1e-3;
-
-
-% ---------------------------------------------------------------------------- %
-%                   SDPs in SDPLIB
-% ---------------------------------------------------------------------------- %
-% qap9
-fprintf('Testing a quadratic assignment problem in SDPLIB: qap9 \n');
-load(['examples',filesep,'qap9.mat'])
-opts.solver = 'primal';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-opts.solver = 'dual';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-
-% mcp250-1
-fprintf('\nTesting a max cut problem in SDPLIB: mcp250-1 \n');
-load(['examples',filesep,'mcp250-1.mat'])
-opts.solver = 'primal';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-opts.solver = 'dual';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-
-% maxG11
-fprintf('\nTesting a max cut problem in SDPLIB: maxG11 \n');
-load(['examples',filesep,'maxG11.mat'])
-opts.solver = 'primal';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-opts.solver = 'dual';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-
+opts.maxIter = 1e+3;
+opts.relTol  = 1e-3;
 
 
 % ---------------------------------------------------------------------------- %
@@ -56,10 +31,9 @@ fprintf('done in %.2f seconds. \n',tsetup);
 
 % solution by admm
 opts.solver = 'primal';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
+cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
-
+cdcs(At,b,c,K,opts);
 
 
 % ---------------------------------------------------------------------------- %
@@ -82,10 +56,37 @@ fprintf('done in %.2f seconds. \n',tsetup);
 
 % solution by admm
 opts.solver = 'primal';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
+cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
-[x,y,z,info]  = admmPDCP(At,b,c,K,opts);
+cdcs(At,b,c,K,opts);
 
+
+% ---------------------------------------------------------------------------- %
+%                   SDPs in SDPLIB
+% ---------------------------------------------------------------------------- %
+% qap9
+fprintf('Testing a quadratic assignment problem in SDPLIB: qap9 \n');
+load(['examples',filesep,'qap9.mat'])
+opts.solver = 'primal';
+cdcs(At,b,c,K,opts);
+opts.solver = 'dual';
+cdcs(At,b,c,K,opts);
+
+% mcp250-1
+fprintf('\nTesting a max cut problem in SDPLIB: mcp250-1 \n');
+load(['examples',filesep,'mcp250-1.mat'])
+opts.solver = 'primal';
+cdcs(At,b,c,K,opts);
+opts.solver = 'dual';
+cdcs(At,b,c,K,opts);
+
+% maxG11
+fprintf('\nTesting a max cut problem in SDPLIB: maxG11 \n');
+load(['examples',filesep,'maxG11.mat'])
+opts.solver = 'primal';
+cdcs(At,b,c,K,opts);
+opts.solver = 'dual';
+cdcs(At,b,c,K,opts);
 
 
 end

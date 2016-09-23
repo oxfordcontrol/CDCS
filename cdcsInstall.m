@@ -1,8 +1,10 @@
-function admmPDCPInstall
+function cdcsInstall
 
-%ADMMPDCPINSTALL
+% CDCSINSTALL
 %
-% Install admmPDCP and compile required binaries.
+% Install CDCS and compile required binaries.
+%
+% See also CDCS, CDCSTEST
 
 
 % First, compile some files from CSparse

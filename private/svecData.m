@@ -1,9 +1,9 @@
 function [At,C,Ats,Cs] = svecData(At,C,K)
 
-%% SVECDATA.m Transform data from sedumi input to svec format for PSD vars
+% SVECDATA.m 
 %
-% Transform data from vectorize format to svectorized format for
-% semidefinite variables according to the cone K.
+% Transform data from vectorize format to svectorized format for semidefinite 
+% variables according to the cone K.
 
 %--------------------------------------------
 % Some variables

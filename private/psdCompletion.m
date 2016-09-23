@@ -3,11 +3,7 @@ function x = psdCompletion(x,K,clique)
 % PSDCOMPLETION.m
 %
 % This is a modified version of SparseCoLO/psdCompletion, adapted for use in
-% admmPDCP. We have:
-% 1) Fixed bugs that prevented the original function from working with cones
-%    other than SDP cones
-% 2) Made copy-free output assignment
-%
+% CDCS.
 
 debugSW = 0;            % if 1, print diagnostics
 epsilon = 1.0e-6;       % perturbation to ensure that XMat(U,U) is positive definite
