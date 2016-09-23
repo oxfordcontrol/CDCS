@@ -89,7 +89,7 @@ If you find CDCS useful, please cite:
     howpublished = {\url{https://github.com/giofantuzzi/CDCS}},
     month        = Sep,
     year         = 2016
-}
+    }
 ```
 A selection of BibTex styles that support arXiv preprints can be found [here](http://arxiv.org/hypertex/bibstyles/).
 ## Contact us<a name="Contacts"></a>
