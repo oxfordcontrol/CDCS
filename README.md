@@ -5,7 +5,7 @@ described in on our paper [_Fast ADMM for Semidefinite Programs with Chordal Spa
 
 **Current version:** 1.0
 
-**Release notes:** CDCS is based on a temporary research code called ADMM-PDCP, which is no longer maintained.
+**Release notes:** CDCS is based on a temporary research code called ADMM-PDCP, which is no longer maintained. If you downloaded ADMM-PDCP, please replace it with CDCS.
 
 
 ## Contents
