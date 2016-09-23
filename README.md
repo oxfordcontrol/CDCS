@@ -93,9 +93,7 @@ If you find CDCS useful, please cite:
 ```
 
 ## Contact us<a name="Contacts"></a>
-To contact us about ADMM-PDCP, suggest improvements and report bugs, email
-* gf910[at]ic.ac.uk (Giovanni Fantuzzi)
-* yang.zheng[at]eng.ox.ac.uk	(Yang Zheng)
+To contact us about CDCS, suggest improvements and report bugs, email either [Giovanni Fantuzzi](mailto:gf910@ic.ac.uk?Subject=CDCS) or [Yang Zheng](mailto:yang.zheng@eng.ox.ac.uk?Subject=CDCS).
 
 
 ## Licence<a name="Licence"></a>
