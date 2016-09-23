@@ -1,6 +1,6 @@
 # CDCS
 
-CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB&reg; solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM) 
+CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM) 
 described in on our paper [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v1.pdf).
 
 **Current version:** 1.0
@@ -22,7 +22,7 @@ CDCS solves in the standard primal and dual vectorized forms
 	(1)	subject to	Ax = b,				(2)	subject to	c - A'y = z,	
 					x \in K								z \in K*
 
-where the conic constraint `x \in K` are _partially decomposable_. This means that
+where the conic constraint `x \in K` are partially decomposable. This means that
 `x \in K` can be replaced by `p` smaller conic constraints `x_1 \in K_1`, ..., 
 `x_p \in K_p`, where `x_1`, ..., `x_p` are (possibly not-disjoint) subsets of the
 original optimization variable `x`.
@@ -43,7 +43,7 @@ although it can be used for any conic program over the supported cones.
 
 ## Quick start<a name="QuickStart"></a>
 
-To install CDCS, simply run the installer script at the MATLAB&reg; command line:
+To install CDCS, simply run the installer script in MATLAB:
 
 	>> cdcsInstall;
 
@@ -99,13 +99,12 @@ To contact us about ADMM-PDCP, suggest improvements and report bugs, email
 ## Licence<a name="Licence"></a>
 
 CDCS is free software; you can redistribute it and/or modify it under the terms 
-of the GNU Lesser General Public Licence (LGPL) as published by the Free Software
+of the [GNU Lesser General Public Licence (LGPL)](https://www.gnu.org/licenses/lgpl-3.0.en.html) as published by the Free Software
 Foundation; either version 3 of the Licence, or (at your option) any later version.
 
 CDCS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE. See the GNU Lesser General Public License for more details.
+PURPOSE. [See the GNU Lesser General Public License for more details](https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
 You should have received a copy of the GNU Lesser General Public License along 
-with this Module; if not, write to the Free Software Foundation, Inc., 
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+with CDCS; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
