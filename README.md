@@ -68,11 +68,6 @@ purposes, in the hope that they will become part of the "official" release. If
 you have any suggestions for improvement, or find any bugs, feel free to [contact us](Contacts)!_
 
 
-## Planned features<a name="PlannedFeats"></a>
-
-* [YALMIP](https://yalmip.github.io/) interface
-
-
 ## How to cite<a name="References"></a>
 
 If you find CDCS useful, please cite:
