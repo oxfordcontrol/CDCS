@@ -1,10 +1,12 @@
-# ADMM-PDCP
+# CDCS
 
-An open-source MATLAB&reg; ADMM solver for partially decomposable conic optimization programs.
+CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB&reg; ADMM solver
+for conic optimization programs with partially decomposable cones.
 
 
 ## Contents
 * [Description](#Description)
+* [Licence](#Licence)
 * [Quick start](#QuickStart)
 * [Planned features](#PlannedFeats)
 * [How to cite](#References)
@@ -13,42 +15,65 @@ An open-source MATLAB&reg; ADMM solver for partially decomposable conic optimiza
 
 ## Description<a name="Description"></a>
 
-ADMM-PDCP is a MATLAB&reg; implementation of the alternating direction method of multipliers (ADMM) 
-for conic programs in the standard primal and dual vectorized forms
+CDCS implements the alternating direction method of multipliers (ADMM) 
+to solve conic programs in the standard primal and dual vectorized forms
 
 		minimize 	c'x						maximize 	b'y
 	(1)	subject to	Ax = b,				(2)	subject to	c - A'y = z,	
 					x \in K								z \in K*
 
-where the conic constraint `x \in K` can be replaced by `p` smaller conic constraints `x_1 \in K_1`, ..., `x_p \in K_p`, where `x_1`, ..., `x_p` are (possibly not-disjoint) subsets of the original optimization variable `x`. ADMM-PDCP supports cartesian products of the following cones:
+where the conic constraint `x \in K` are _partially decomposable_. This means that
+`x \in K` can be replaced by `p` smaller conic constraints `x_1 \in K_1`, ..., 
+`x_p \in K_p`, where `x_1`, ..., `x_p` are (possibly not-disjoint) subsets of the
+original optimization variable `x`. 
+CDCS supports cartesian products of the following cones:
 
 * R^n (free variables)
 * Non-negative orthant
 * Second-order cone
 * Positive semidefinite cone
 
-At present, only chordal decomposition techniques for semidefinite cones are implemented, while the other supported cone types are not decomposed. Consequently, ADMM-PDCP is most suitable for large semidefinite programs (SDPs) characterized by chordal sparsity, although it can be used for any conic program over the supported cones.
+Currently, CDCS only decomposes semidefinite cones characterized by a chordal 
+sparsity pattern. The other supported cone types are not decomposed. 
+This means that CDCS is most suitable for large sparse semidefinite programs (SDPs),
+although it can be used for any conic program over the supported cones.
+
+
+## Licence
+
+CDCS is free software; you can redistribute it and/or modify it under the terms 
+of the GNU Lesser General Public Licence (LGPL) as published by the Free Software
+Foundation; either version 3 of the Licence, or (at your option) any later version.
+
+CDCS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along 
+with this Module; if not, write to the Free Software Foundation, Inc., 
+51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
 ## Quick start<a name="QuickStart"></a>
 
-To install ADMM-PDCP, simply run the installer script at the MATLAB&reg; command line:
+To install CDCS, simply run the installer script at the MATLAB&reg; command line:
 
-	>> admmPDCPInstall;
+	>> cdcsInstall;
 
 To test your installation, run 
 
-	>> admmPDCPTest;
+	>> cdcsTest;
 	
-ADMM-PDCP is called with the syntax
+CDCS is called with the syntax
 
-	>> [x,y,z,info] = admmPDCP(At,b,c,K);
+	>> [x,y,z,info] = cdcs(At,b,c,K,options);
 	
-where `At` is the transpose of the data matrix in problem (1) above. Note that the inputs and outputs are in the same format used by SeDuMi. Type
+where `At` is the transpose of the matrix `A` in problems (1)-(2) above. 
+Note that the inputs and outputs are in the same format used by SeDuMi. Type
 
-	>> help admmPDCP
+	>> help cdcsOpts
 	
-for more details about specifying additional solver options.
+for a complete list of solver options.
 	
 **NOTE:** _this is a research code, and is under active development. You may find 
 some undocumented inputs and options that are being used for development 
