@@ -31,9 +31,9 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %
 % The output structure 'info' contains the following information:
 %
-% info.feas: - 0: CDCS terminated succesfully 
-%            - 1: the maximum number of iterations was reached
-%            - 2: the ADMM iterations terminated succesfully, but the positive 
+% info.problem: - 0: CDCS terminated succesfully 
+%               - 1: the maximum number of iterations was reached
+%               - 2: the ADMM iterations terminated succesfully, but the positive 
 %                 matrix completion algorithm threw an error
 % info.iter: number of iterations
 % info.cost: terminal cost
@@ -176,21 +176,21 @@ posttime = tic;
 posttime = toc(posttime);
 
 % Info
-info.feas = opts.feasCode;              % diagnostic code
-info.iter = iter;                       % # of iterations
-info.cost = log.cost;                   % terminal cost
-info.pres = log.pres;                   % terminal primal ADMM res
-info.dres = log.dres;                   % terminal dual ADMM res
-info.time.setup   = proctime;           % setup time
-info.time.admm    = admmtime;           % ADMM time
-info.time.cleanup = posttime;           % post-processing time
-info.time.total   = toc(tstart);        % total CPU time
+info.problem = opts.feasCode;              % diagnostic code
+info.iter    = iter;                       % # of iterations
+info.cost    = log.cost;                   % terminal cost
+info.pres    = log.pres;                   % terminal primal ADMM res
+info.dres    = log.dres;                   % terminal dual ADMM res
+info.time.setup   = proctime;              % setup time
+info.time.admm    = admmtime;              % ADMM time
+info.time.cleanup = posttime;              % post-processing time
+info.time.total   = toc(tstart);           % total CPU time
 
 % Print summary
 if opts.verbose
     fprintf(' SOLUTION SUMMARY:\n')
     fprintf('------------------\n')
-    fprintf(' Termination code     : %11.1d\n',info.feas)
+    fprintf(' Termination code     : %11.1d\n',info.problem)
     fprintf(' Number of iterations : %11.d\n',iter)
     fprintf(' Cost                 : %11.4e\n',info.cost)
     fprintf(' Primal residual      : %11.4e\n',info.pres)

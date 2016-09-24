@@ -143,6 +143,8 @@ if ~isempty(K.s) && any(K.s~=0)
     
 else
     Ech = nonSDPind;
+    cliques = [];
+    cd = c;
     usedvars = nonSDPind;
     totvars = size(At,1);
     
