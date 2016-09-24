@@ -34,7 +34,7 @@ xa = M*y;
 
 % Setup and solve with YALMIP using CDCS
 x = sdpvar(n,1);
-sol = optimize(A*x==b,x'*Q*x/2,opts);
+optimize(A*x==b,x'*Q*x/2,opts);
 xv = value(x);
 
 % Display solution
