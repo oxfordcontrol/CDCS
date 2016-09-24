@@ -72,7 +72,7 @@ opts = cdcsOpts;
 %============================================
 % Set user options
 if(nargin >= 5)
-    opts = setstructfields(opts,userOpts);
+    opts = setUserOpts(opts,userOpts);
 end
 
 % Checks on specified solver type and method
