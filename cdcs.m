@@ -10,8 +10,8 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 % cones and ADMM. CDCS solves the primal (P) or dual (D) standard forms of
 % the conic problem,
 %
-%         min <c,x>                             min -<b,y>
-%   (P)   s.t. Ax = b,                  (D)     s.t. A^Ty - c = z
+%         min <c,x>                             max <b,y>
+%   (P)   s.t. Ax = b,                  (D)     s.t. c - A^Ty = z
 %         x \in K                               z \in K*
 %
 % where A,b and c are the problem date and K is the cone (K* is the dual cone).
