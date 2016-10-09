@@ -11,6 +11,8 @@ if iter == 1
     itDinf = 0; % number of iterations for which pinf/dinf > eta
 end
 
+% Import functions
+import cdcs_utils.flatten
 
 % Extract some variables
 Ex = flatten(Y.vec,X.blk);

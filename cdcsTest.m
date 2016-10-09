@@ -171,6 +171,9 @@ function [At,b,c,K] = bandedSDP(m,K,bandWidth)
 % K        : the cone
 % bandWidth: the bandWidth for each SDP cone (vector of the same length as K.s)
 
+import cdcs_utils.makeConeVariables
+import cdcs_utils.projectK
+import cdcs_utils.clean
 density = 0.35;
 
 % Check cone

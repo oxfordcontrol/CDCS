@@ -1,6 +1,10 @@
 function [projAffine,projCone] = makeProjectors(At,b,c,K,cd,E,opts)
 % Create projection operators
 
+% Import functions
+import cdcs_utils.makeConeVariables
+import cdcs_utils.blockify
+
 %rho = opts.rho;
 H = accumarray(E,1);
 
@@ -57,6 +61,9 @@ end
 %----------------------
 function S = projectionToCones(K,EX,L,CZ,rho,opts)
     
+    % Import functions
+    import cdcs_utils.projectK
+
     % project variables to cones
     if strcmpi(opts.solver,'primal')
         S = cellfun(@(EX,L,CZ)(EX - L./rho - CZ./rho),EX,L,CZ,'UniformOutput',false);
@@ -191,11 +198,17 @@ function [z,p] = solveKKT(factors,bz,bp)
     %otherwise, factor the complete LHS above
 
     persistent useBuiltin
-
     if(isempty(useBuiltin))
         %default to look for CSparse code
-         useBuiltin = ~exist(['cs_ltsolve.' mexext],'file');  
+         useBuiltin = ~exist(['+cdcs_utils',filesep,'cs_ltsolve.' mexext],'file');
+         useBuiltin = useBuiltin | ~exist(['+cdcs_utils',filesep,'cs_lsolve.' mexext],'file');
     end
+    
+    % Import functions
+    import cdcs_utils.cs_lsolve
+    import cdcs_utils.cs_ltsolve
+    
+    % Compute
 
     if strcmpi(factors.flag,'ldl')
 

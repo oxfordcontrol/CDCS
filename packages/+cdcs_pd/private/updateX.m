@@ -4,6 +4,9 @@ function [X,others] = updateX(X,Y,Z,rho,others,Ech,K,projAffine,opts)
 % Update block X for sparse conic ADMM solver: a projection on affine
 % constraints
 
+% Import functions
+import cdcs_utils.blockify
+
 % Project onto affine constraints
 [x,y] = projAffine(Y.vec,Z.vec,rho);
 

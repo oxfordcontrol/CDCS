@@ -24,7 +24,7 @@ if isempty(initVars)
     Z.vec = sparse(opts.nXk,1);
     
     %initialize blockified versions of all variables
-    [X.blk,Y.blk,Z.blk] = makeConeVariables(K);
+    [X.blk,Y.blk,Z.blk] = cdcs_utils.makeConeVariables(K);
     
 else
     % initialized vectorized variables with used input

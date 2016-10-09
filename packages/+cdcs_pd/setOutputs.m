@@ -4,6 +4,12 @@ function [x,y,z,opts] = setOutputs(X,Y,Z,others,K,cd,E,chstuff,opts)
 %
 % Set outputs in sedumi format using positive semidefinite completion algorithms
 
+% Import functions
+import cdcs_utils.makeConeVariables
+import cdcs_utils.flatten
+import cdcs_utils.blockify
+import cdcs_utils.psdCompletion
+
 % Intialize outputs with correct dimensions
 x = zeros(opts.n_init,1);
 y = zeros(opts.m_init,1);

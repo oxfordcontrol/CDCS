@@ -12,11 +12,13 @@ here = pwd;
 cd('include')
 cs_install
 cd(here);
-movefile(['include',filesep,'cs_lsolve.mex*'],[here,filesep,'private']);
-movefile(['include',filesep,'cs_ltsolve.mex*'],[here,filesep,'private']);
+movefile(['include',filesep,'cs_lsolve.mex*'], ...
+         [here,filesep,'packages',filesep,'+cdcs_utils']);
+movefile(['include',filesep,'cs_ltsolve.mex*'], ...
+         [here,filesep,'packages',filesep,'+cdcs_utils']);
 
 % Then compile some mex files from this package
-cd('private')
+cd(['packages',filesep,'+cdcs_utils',filesep,'private'])
 if (~isempty (strfind (computer, '64')))
     mexcmd = 'mex -largeArrayDims' ;
 else
@@ -28,6 +30,7 @@ cd(here)
 
 % Finally add to path and save
 addpath(here);
+addpath([here,filesep,'packages']);
 savepath
 
 fprintf('\nCompilation completed successfully.\n');

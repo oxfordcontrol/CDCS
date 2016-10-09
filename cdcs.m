@@ -4,7 +4,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %
 % Syntax:
 %
-% [x,y,z,info] = CDCS(At,b,c,K,opts)
+% [x,y,z,info] = CDCS(At,b,c,K,options)
 %
 % Solve a sparse conic program using chordal decomposition for the semidefinite
 % cones and ADMM. CDCS solves the primal (P) or dual (D) standard forms of
@@ -18,14 +18,14 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 % The standard form to be solved is specified by the "solver" field of the
 % options structure:
 %
-%   opts.solver = 'primal' (default): solve the problem in primal standard form
-%   opts.solver = 'dual'            : solve the problem in dual standard form
+%   options.solver = 'primal' (default): solve the problem in primal standard form
+%   options.solver = 'dual'            : solve the problem in dual standard form
 %
 % The chordal decomposition can be carried out in two ways, specified by the
 % "chordalize" option:
 %
-%   opts.chordalize = 1 (default): split the data equally between the cliques
-%   opts.chordalize = 2          : assign data to one clique only
+%   options.chordalize = 1 (default): split the data equally between the cliques
+%   options.chordalize = 2          : assign data to one clique only
 %
 % <a href="matlab:help('cdcsOpts')">Click here for a complete list of options</a>.
 %
@@ -61,10 +61,11 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 
 
 %============================================
-% Solver options
+% Solver options & import cdcs_utils
 %============================================
 tstart = tic;
 opts = cdcsOpts;
+import cdcs_utils.*
 
 
 %============================================
@@ -114,7 +115,7 @@ if (nargin < 6); initVars=[]; end
 [X,Y,Z,others] = makeVariables(K,initVars,opts);
 
 % Make operators for ADMM
-[step1,step2,step3,checkConv] = makeADMM(At,b,c,K,cd,Ech,opts);
+[updateX,updateY,updateZ,checkConvergence] = makeADMM(At,b,c,K,cd,Ech,opts);
 
 % Time setup and display
 proctime = toc(proctime);
@@ -151,12 +152,12 @@ for iter = 1:opts.maxIter
     YOld = Y;
     
     % Update block variables
-    [X,others] = step1(X,Y,Z,opts.rho,others);
-    [Y,others] = step2(X,Y,Z,opts.rho,others);
-    [Z,others] = step3(X,Y,Z,opts.rho,others);
+    [X,others] = updateX(X,Y,Z,opts.rho,others);
+    [Y,others] = updateY(X,Y,Z,opts.rho,others);
+    [Z,others] = updateZ(X,Y,Z,opts.rho,others);
     
     % log errors / check for convergence
-    [isConverged,log,opts] = checkConv(X,Y,Z,YOld,others,iter,admmtime,opts);
+    [isConverged,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
     if isConverged
         opts.feasCode = 0;
         break;
