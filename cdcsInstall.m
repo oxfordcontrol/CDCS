@@ -29,8 +29,8 @@ eval([mexcmd, ' smat.c']);
 cd(here)
 
 % Finally add to path and save
-addpath(here);
 addpath([here,filesep,'packages']);
+addpath(here);
 savepath
 
 fprintf('\nCompilation completed successfully.\n');
