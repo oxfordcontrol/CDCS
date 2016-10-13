@@ -29,18 +29,21 @@ tsetup = tic;
 tsetup = toc(tsetup);
 fprintf('done in %.2f seconds. \n',tsetup);
 
-% solution by admm
+%solution by admm
 opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+% testing cdcs_hsde
+opts.solver = 'hsde';
+cdcsSD(At,b,c,K,opts);
 
 
 % ---------------------------------------------------------------------------- %
 %                       Conic program with banded SDP
 % ---------------------------------------------------------------------------- %
 % Parameters
-m   = 500;                      % # constraints
+m   = 100;                      % # constraints
 K.f = 23;                       % # free variables
 K.l = 150;                      % # non-negative variables
 K.q = [15, 30];                 % # second-order cones
@@ -59,6 +62,9 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+% testing cdcs_hsde
+opts.solver = 'hsde';
+cdcsSD(At,b,c,K,opts);
 
 
 % ---------------------------------------------------------------------------- %
@@ -71,6 +77,9 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+% testing cdcs_hsde
+opts.solver = 'hsde';
+cdcsSD(At,b,c,K,opts);
 
 % mcp250-1
 fprintf('\nTesting the SDPLIB problem mcp250-1 \n');
@@ -79,6 +88,9 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+% testing cdcs_hsde
+opts.solver = 'hsde';
+cdcsSD(At,b,c,K,opts);
 
 % ---------------------------------------------------------------------------- %
 %                                   END

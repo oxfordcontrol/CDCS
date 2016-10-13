@@ -11,7 +11,7 @@ switch lower(opts.solver)
         [X,Y,Z,others] = cdcs_pd.makeVariables(K,initVars,opts);
         
     case {'hsde'}
-        error('Homogeneous self-dual embedding solver coming soon!')
+        [X,Y,Z] = cdcs_hsde.makeVariables(K,initVars,opts);
         
     otherwise
         error('Unknown value for ''options.solver''.')
