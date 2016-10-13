@@ -12,8 +12,8 @@ switch lower(opts.solver)
             cdcs_pd.makeADMM(At,b,c,K,cd,Ech,opts);
         
     case {'hsde'}
-        error('Homogeneous self-dual embedding solver coming soon!')
-        
+        [updateX,updateY,updateZ,checkConvergence] = ...
+            cdcs_hsde.makeADMM(At,b,c,K,Ech,opts);
     otherwise
         error('Unknown value for ''options.solver''.')
             
