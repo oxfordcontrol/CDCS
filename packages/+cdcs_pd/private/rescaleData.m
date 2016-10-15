@@ -1,6 +1,6 @@
 function [At,b,c,K,opts] = rescaleData(At,b,c,K,opts)
 
-% RESCALEDATA.m
+% CDCS/packages/+cdcs_pd/RESCALEDATA.m
 % Try to rescale data to get nicer convergence properties.
 % Assumes no zero columns in At, otherwise will fail.
 

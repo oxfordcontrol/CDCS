@@ -1,4 +1,4 @@
-function [updateX,updateY,updateZ,checkConvergence] = makeADMM(At,b,c,K,cd,Ech,opts)
+function [updateX,updateY,updateZ,checkConvergence] = makeADMM(At,b,c,K,Ech,opts)
 
 % CDCS/packages/+cdcs_utils/MAKEADMM.m
 %
@@ -9,7 +9,7 @@ switch lower(opts.solver)
    
     case {'primal', 'dual'}
         [updateX,updateY,updateZ,checkConvergence] = ...
-            cdcs_pd.makeADMM(At,b,c,K,cd,Ech,opts);
+            cdcs_pd.makeADMM(At,b,c,K,Ech,opts);
         
     case {'hsde'}
         error('Homogeneous self-dual embedding solver coming soon!')

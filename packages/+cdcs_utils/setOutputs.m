@@ -1,4 +1,4 @@
-function [x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,cd,Ech,chstuff,opts)
+function [x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,opts)
 
 % CDCS/packages/+cdcs_utils/SETOUTPUTS.m
 %
@@ -8,7 +8,7 @@ function [x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,cd,Ech,chstuff,opts)
 switch lower(opts.solver)
    
     case {'primal', 'dual'}
-        [x,y,z,opts] = cdcs_pd.setOutputs(X,Y,Z,others,Kold,cd,Ech,chstuff,opts);
+        [x,y,z,opts] = cdcs_pd.setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,opts);
         
     case {'hsde'}
         error('Homogeneous self-dual embedding solver coming soon!')

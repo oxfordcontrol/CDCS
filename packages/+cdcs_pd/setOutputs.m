@@ -1,4 +1,4 @@
-function [x,y,z,opts] = setOutputs(X,Y,Z,others,K,cd,E,chstuff,opts)
+function [x,y,z,opts] = setOutputs(X,Y,Z,others,K,c,E,chstuff,opts)
 
 % SETOUTPUTS.M
 %
@@ -15,9 +15,25 @@ x = zeros(opts.n_init,1);
 y = zeros(opts.m_init,1);
 z = zeros(opts.n_init,1);
 
+
+% Decompose cost vector
+if opts.chordalize == 1
+    % Decompose equally
+    IA  = accumarray(E,1);
+    cd  = c./IA; cd  = cd(E);    
+elseif opts.chordalize == 2
+    % Decompose using only last entry
+    nv  = length(E);
+    cd  = zeros(nv,1);
+    [U,IA] = unique(E,'last');
+    cd(IA,:) = c(U,:); 
+else
+    error('Unknown chordal decomposition method.')    
+end
+
 % Create some useful variables. xsvec is initialized so it is obvious which
 % entries have not been computed if psdCompletion is not called upon user
-% request. This is also good for compatibility with YALMIP: used variables are 
+% request. This is also good for compatibility with YALMIP: used variables are
 % set to NaN!
 xtemp = zeros(opts.n,1);
 ztemp = zeros(opts.n,1);
@@ -53,21 +69,21 @@ if opts.feasCode==0 && opts.completion==1
         xtemp = psdCompletion(xtemp,K,chstuff.cliques); % psdComplete!
     catch
         warning('CDCS:psdCompletion',...
-                ['Aborting matrix completion algorithm due to a problem.\n'...
-                 'Variables in the positive semidefinite cones will be ',...
-                 'returned without completion.']);
+            ['Aborting matrix completion algorithm due to a problem.\n'...
+            'Variables in the positive semidefinite cones will be ',...
+            'returned without completion.']);
         opts.feasCode = 2;
     end
 end
 
+% Scale solution
+xtemp = (xtemp./opts.scaleFactors.D)./opts.scaleFactors.sc_b;
+y = (y./opts.scaleFactors.E)./opts.scaleFactors.sc_c;
+ztemp = (ztemp.*opts.scaleFactors.D)./opts.scaleFactors.sc_c;
+
 % Assign solution to used variables
 x(opts.usedvars) = xtemp;
 z(opts.usedvars) = ztemp;
-
-% Scale solution
-x = (x./opts.scaleFactors.D)./opts.scaleFactors.sc_b;
-y = (y./opts.scaleFactors.E)./opts.scaleFactors.sc_c;
-z = (z.*opts.scaleFactors.D)./opts.scaleFactors.sc_c;
 
 
 % END FUNCTION

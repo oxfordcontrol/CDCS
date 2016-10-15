@@ -83,7 +83,7 @@ end
 
 % Print nice welcoming header
 if opts.verbose
-    myline1 = [repmat('=',1,64),'\n'];
+    [header,myline1,myline2] = printHeader(opts);
     fprintf(myline1)
     fprintf('CDCS by G. Fantuzzi, Y. Zheng -- v1.0\n')
     fprintf(myline1)
@@ -96,13 +96,12 @@ proctime = tic;
 
 % sparsify everything, check cone constraints, rescale
 [At,b,c,K,opts] = checkInputs(At,b,c,K,opts);
-[At,b,c,K,opts] = rescaleData(At,b,c,K,opts);
 [At,b,c,K,opts] = splitBlocks(At,b,c,K,opts);
 [opts.n,opts.m] = size(At);
 
-% chordal decomposition
+% rescale & chordal decomposition
 Kold = K;
-[At,b,c,K,Ech,cd,chstuff] = chordalize(At,b,c,K,opts);
+[At,b,c,K,Ech,chstuff,opts] = preprocess(At,b,c,K,opts);
 
 % basic decomposed problem dimensions:  no. of cones, no. of vectorized conic
 % variables, and no. of free primal variables
@@ -115,14 +114,19 @@ if (nargin < 6); initVars=[]; end
 [X,Y,Z,others] = makeVariables(K,initVars,opts);
 
 % Make operators for ADMM
-[updateX,updateY,updateZ,checkConvergence] = makeADMM(At,b,c,K,cd,Ech,opts);
+[updateX,updateY,updateZ,checkConvergence] = makeADMM(At,b,c,K,Ech,opts);
 
 % Time setup and display
 proctime = toc(proctime);
 if opts.verbose
-    myline2 = [repmat('-',1,64),'\n'];
+    % Set method to display
+    if strcmpi(opts.solver,'hsde')
+        method = 'homogeneous self-dual embedding';
+    else
+        method = opts.solver;
+    end
     fprintf('done in %.4f seconds.      \n',proctime);
-    fprintf('Standard form          : %s\n',opts.solver);
+    fprintf('Algorithm              : %s\n',method);
     fprintf('Chordalization method  : %i\n',opts.chordalize);
     fprintf('Adaptive penalty       : %i\n',opts.adaptive);
     fprintf('Scale data             : %i\n',opts.rescale);
@@ -132,18 +136,14 @@ if opts.verbose
     fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(K.s),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));
-    fprintf(myline1)
+    fprintf(myline1);
+    fprintf(header);
+    fprintf(myline2);
 end
 
 %============================================
 % Run ADMM
 %============================================
-% Display
-if opts.verbose
-    fprintf(' iter |   pres   |   dres   |    cost    |   rho    | time (s) |\n')
-    fprintf(myline2)
-end
-
 admmtime = tic;
 opts.feasCode = 1;
 for iter = 1:opts.maxIter
@@ -164,16 +164,13 @@ for iter = 1:opts.maxIter
     end
 end
 admmtime = toc(admmtime);
-if opts.verbose
-    fprintf(myline1)
-end
 
 %============================================
 % Outputs
 %============================================
 % Variables in sedumi format
 posttime = tic;
-[x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,cd,Ech,chstuff,opts);
+[x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,opts);
 posttime = toc(posttime);
 
 % Info
@@ -189,6 +186,7 @@ info.time.total   = toc(tstart);           % total CPU time
 
 % Print summary
 if opts.verbose
+    fprintf(myline1)
     fprintf(' SOLUTION SUMMARY:\n')
     fprintf('------------------\n')
     fprintf(' Termination code     : %11.1d\n',info.problem)
