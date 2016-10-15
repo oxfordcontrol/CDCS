@@ -39,6 +39,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 % info.cost: terminal cost
 % info.pres: terminal primal ADMM residual
 % info.dres: terminal dual ADMM residual
+% info.log : history log of the ADMM residuals, cost, etc.
 % info.time: some timing information (setup, ADMM iterations, cleanup, total)
 %
 % See also CDCSOPTS
@@ -145,7 +146,6 @@ end
 % Run ADMM
 %============================================
 admmtime = tic;
-opts.feasCode = 1;
 for iter = 1:opts.maxIter
     
     % Save current iterate for convergence test
@@ -157,9 +157,8 @@ for iter = 1:opts.maxIter
     [Z,others] = updateZ(X,Y,Z,opts.rho,others);
     
     % log errors / check for convergence
-    [isConverged,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
-    if isConverged
-        opts.feasCode = 0;
+    [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
+    if stop
         break;
     end
 end
@@ -170,15 +169,15 @@ admmtime = toc(admmtime);
 %============================================
 % Variables in sedumi format
 posttime = tic;
-[x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,opts);
+[x,y,z,info,opts] = setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,info,opts);
 posttime = toc(posttime);
 
 % Info
-info.problem = opts.feasCode;              % diagnostic code
 info.iter    = iter;                       % # of iterations
-info.cost    = log.cost;                   % terminal cost
-info.pres    = log.pres;                   % terminal primal ADMM res
-info.dres    = log.dres;                   % terminal dual ADMM res
+info.cost    = log(iter).cost;             % terminal cost
+info.pres    = log(iter).pres;             % terminal primal ADMM res
+info.dres    = log(iter).dres;             % terminal dual ADMM res
+info.log     = log;                        % log of residuals etc
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time

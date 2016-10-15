@@ -1,4 +1,4 @@
-function [x,y,z,opts] = setOutputs(X,Y,Z,others,K,c,E,chstuff,opts)
+function [x,y,z,info,opts] = setOutputs(X,Y,Z,others,K,c,E,chstuff,info,opts)
 
 % SETOUTPUTS.M
 %
@@ -62,7 +62,7 @@ end
 % Positive semidefinite completion of x variable
 xmat  = blockify(xmat,xsvec,K);
 xtemp = flatten(xtemp,xmat,0);                   % in sedumi format for psdCompletion
-if opts.feasCode==0 && opts.completion==1
+if info.problem==0 && opts.completion==1
     try
         % This will give an error if one PSD cone can in fact be split into multiple
         % separate cones
@@ -72,7 +72,7 @@ if opts.feasCode==0 && opts.completion==1
             ['Aborting matrix completion algorithm due to a problem.\n'...
             'Variables in the positive semidefinite cones will be ',...
             'returned without completion.']);
-        opts.feasCode = 2;
+        info.problem = 2;
     end
 end
 
