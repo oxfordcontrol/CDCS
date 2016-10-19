@@ -10,7 +10,8 @@ switch lower(opts.solver)
         [header,myline1,myline2] = cdcs_pd.printHeader;
         
     case {'hsde'}
-        error('Homogeneous self-dual embedding solver coming soon!')
+        %error('Homogeneous self-dual embedding solver coming soon!')
+        [header,myline1,myline2] = cdcs_hsde.printHeader;
         
     otherwise
         error('Unknown value for ''options.solver''.')

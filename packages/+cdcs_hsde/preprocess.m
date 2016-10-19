@@ -50,6 +50,10 @@ At  = At(usedvars,:);
 c   = c(usedvars);
 K.s = s;
 
+if opts.rescale == 1
+    opts.scaleFactors.D1 = opts.scaleFactors.D1(usedvars);
+end
+
 % Check if At,b,C are indeed sparse - if not, make full for speed!
 [n,m] = size(At);
 densityTol = 0.6;
@@ -70,3 +74,10 @@ end
 stuff.cliques  = cliques;
 stuff.usedvars = usedvars;
 stuff.totvars  = totvars;
+
+%% norms, used repeatly in convergence checking
+opts.nAt = norm(At,'fro');
+opts.nb  = norm(b,'fro');
+opts.nc  = norm(c,'fro');
+
+

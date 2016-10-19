@@ -60,3 +60,7 @@ options.rhoMax     = 1e6;       % maximum penalty parameter
 options.rhoMin     = 1e-6;      % minimum penalty parameter
 options.rhoIt      = 10;        % if pres/dres>mu (<mu) mu for rhoIt iterations, adapt rho
 options.KKTfact    = 'blk';     % Options for KKT systems
+
+% the following is for self-dual embedding
+options.alpha         = 1.5;    % over relaxation, must lie in (0,2); 1.5 is recommanded
+
