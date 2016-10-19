@@ -60,6 +60,7 @@ elseif strcmpi(opts.solver,'dual')
 end
 
 % Positive semidefinite completion of x variable
+% Only complete if problem successfully solved!
 xmat  = blockify(xmat,xsvec,K);
 xtemp = flatten(xtemp,xmat,0);                   % in sedumi format for psdCompletion
 if info.problem==0 && opts.completion==1
@@ -72,7 +73,7 @@ if info.problem==0 && opts.completion==1
             ['Aborting matrix completion algorithm due to a problem.\n'...
             'Variables in the positive semidefinite cones will be ',...
             'returned without completion.']);
-        info.problem = 2;
+        info.problem = 4;
     end
 end
 

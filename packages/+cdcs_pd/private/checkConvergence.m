@@ -2,6 +2,10 @@ function [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,op
 
 % CHECKCONVERGENCE
 % Use the basic convergence test in the Boyd survey paper
+% Primal/dual solver cannot detect infeasibility so error codes can only be
+% 0: problem successfully solved
+% 3: max number of iterations reached
+
 
 persistent itPinf itDinf
 if iter == 1
@@ -53,7 +57,7 @@ if(max(pres,dres)<opts.relTol)
     info.problem = 0;
 else
     stop = false;
-    info.problem = 1;
+    info.problem = 3;
 end
 
 %progress message
