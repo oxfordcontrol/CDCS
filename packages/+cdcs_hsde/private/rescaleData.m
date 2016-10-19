@@ -54,7 +54,7 @@ if opts.rescale
     
     D1(D1>maxScaleRowAt) = maxScaleRowAt;     % set upper bound
     D1(D1<minScaleRowAt) = 1;                 % set lower bound
-    At = bsxfun(@rdivide,At,D1);             % divide row i of At by D(i)
+    At = bsxfun(@rdivide,At,D1);              % divide row i of At by D(i)
     
     % norms of rows of [0 -I]
     D2 = ones(length(Ech),1);
@@ -69,7 +69,7 @@ if opts.rescale
     E1 = full(sqrt(sum(At.*At,1)));            
     E1(E1>maxScaleColAt) = maxScaleColAt;       % set upper bound
     E1(E1<minScaleColAt) = 1;                   % set lower bound
-    At = bsxfun(@rdivide,At,E1);               % divide col i of At by E(i)
+    At = bsxfun(@rdivide,At,E1);                % divide col i of At by E(i)
     
     % rows of [D1H -D2I]
     E2 = sqrt(ones(length(Ech),1)+(1./D1(Ech)).^2); 
@@ -106,8 +106,7 @@ if opts.rescale
     opts.scaleFactors.sc_b = sc_b;
     opts.scaleFactors.sc_c = sc_c;
     opts.scaleFactors.sc_cost = sc_c*sc_b;
-    
-    
+        
 else
     
     % Dummy scale factor

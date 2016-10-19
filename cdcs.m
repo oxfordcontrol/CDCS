@@ -78,8 +78,8 @@ if(nargin >= 5)
 end
 
 % Checks on specified solver type and method
-if ~any(strcmpi(opts.solver,{'primal','dual'}))
-    error('Unknown opts.solver. Please use "primal" or "dual".')
+if ~any(strcmpi(opts.solver,{'primal','dual','hsde'}))
+    error('Unknown opts.solver. Please use "primal", "dual" or "hsde".')
 end
 
 % Print nice welcoming header
@@ -95,7 +95,7 @@ end
 % start timing
 proctime = tic;
 
-% sparsify everything, check cone constraints, rescale
+% sparsify everything, check cone constraints
 [At,b,c,K,opts] = checkInputs(At,b,c,K,opts);
 [At,b,c,K,opts] = splitBlocks(At,b,c,K,opts);
 [opts.n,opts.m] = size(At);
