@@ -35,9 +35,10 @@ zsvec(chstuff.usedvars) = (zsvec(chstuff.usedvars).*opts.scaleFactors.D1)./opts.
 zmat = blockify(zmat,zsvec,K);
 ztemp = flatten(ztemp,zmat,0);
 % Positive semidefinite completion of x variable
+% Only complete if problem successfully solved!
 xmat  = blockify(xmat,xsvec,K);
 xtemp = flatten(xtemp,xmat,0);                   % in sedumi format for psdCompletion
-if (info.problem==0 || info.problem==3)&& opts.completion==1
+if info.problem==0 && opts.completion==1
     try
         % This will give an error if one PSD cone can in fact be split into multiple
         % separate cones
@@ -47,7 +48,7 @@ if (info.problem==0 || info.problem==3)&& opts.completion==1
             ['Aborting matrix completion algorithm due to a problem.\n'...
             'Variables in the positive semidefinite cones will be ',...
             'returned without completion.']);
-        info.problem = 2;
+        info.problem = 4;
     end
 end
 

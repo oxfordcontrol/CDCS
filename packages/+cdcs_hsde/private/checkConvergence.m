@@ -1,10 +1,15 @@
 function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opts,At,b,c,E,others)
-%[Flag,pcost,dcost,presi,dresi,gap,opts] = checkConvergence(u,v,iter,admmtime,opts,At,b,c,E,hatu,uold)
 
 % CHECKCONVERGENCE primal/dual infeasible
+% Problem codes 
+%
+% 0: converged 
+% 1: primal infeasible
+% 2: dual infeasible 
+% 3: max number of iterations reached
 
 stop = false;
-info.problem = 3;         %% 0=converged, 1=primal infeasible, 2=dual infeasible, 3 = max number of iterations
+info.problem = 3;         
 
 if u.tau > 0   %% feasible problem
     x = u.x./u.tau; y = u.y./u.tau;
@@ -21,7 +26,7 @@ if u.tau > 0   %% feasible problem
         stop = true;
     end
     
-    %% adpative penalty?
+    % adpative penalty?
     % GF: Only adapt penalty if not stopping after this iteration...
     if opts.adaptive && ~stop
         
@@ -59,7 +64,7 @@ else % infeasible or unbounded problem?
         end
     end
         
-    %% value
+    % value
     presi = NaN;
     dresi = NaN;
     pcost = NaN;
@@ -79,9 +84,12 @@ log(iter).dres = dresi;
 log(iter).cost = pcost;   %% use primal cost
 log(iter).dcost = dcost;
 
+% end main
 end
 
-%% Nested functions
+% ============================================================================ %
+% Nested functions
+% ============================================================================ %
 
 function opts = updatePenalty(opts,pres,dres)
 % Update penaly
