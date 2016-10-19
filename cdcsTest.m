@@ -30,9 +30,11 @@ tsetup = toc(tsetup);
 fprintf('done in %.2f seconds. \n',tsetup);
 
 % solution by admm
-opts.solver = 'PRimAl';
+opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
-opts.solver = 'DuAl';
+opts.solver = 'dual';
+cdcs(At,b,c,K,opts);
+opts.solver = 'hsde';
 cdcs(At,b,c,K,opts);
 
 
@@ -59,7 +61,8 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
-
+opts.solver = 'hsde';
+cdcs(At,b,c,K,opts);
 
 % ---------------------------------------------------------------------------- %
 %                              SDPs in SDPLIB
@@ -71,6 +74,8 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+opts.solver = 'hsde';
+cdcs(At,b,c,K,opts);
 
 % mcp250-1
 fprintf('\nTesting the SDPLIB problem mcp250-1 \n');
@@ -78,6 +83,8 @@ load(['examples',filesep,'mcp250-1.mat'])
 opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
+cdcs(At,b,c,K,opts);
+opts.solver = 'hsde';
 cdcs(At,b,c,K,opts);
 
 % ---------------------------------------------------------------------------- %
