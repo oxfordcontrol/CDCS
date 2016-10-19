@@ -2,12 +2,17 @@
 
 CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM) 
 described in on our papers 
-    1. [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v2.pdf) (included in the `doc/` folder).
-    2. _Self-dual embedding paper_
+
+1. [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v2.pdf) (included in the `doc/` folder).
+
+2. _Self-dual embedding paper_
 
 **Current version:** 1.1
 
-**Release notes:** CDCS is based on a temporary research code called ADMM-PDCP, which is no longer maintained. If you downloaded ADMM-PDCP, please replace it with CDCS.
+**Release notes:** 
+
+* Homogeneous self-dual embedding is the new default method 
+* CDCS is based on a temporary research code called ADMM-PDCP, which is no longer maintained. If you downloaded ADMM-PDCP, please replace it with CDCS.
 
 
 ## Contents
@@ -43,6 +48,9 @@ sparsity pattern. The other supported cone types are not decomposed.
 This means that CDCS is most suitable for large sparse semidefinite programs (SDPs),
 although it can be used for any conic program over the supported cones.
 
+CDCS offers a choice to solve the primal problem (1) only, the dual problem (2) only,
+or the homogeneous self-dual embedding of the two problems. _From version 1.1, the 
+homogeneous self-dual embedding is the default method._
 
 
 ## Quick start<a name="QuickStart"></a>
@@ -74,9 +82,13 @@ you have any suggestions for improvement, or find any bugs, feel free to [contac
 
 ## How to cite<a name="References"></a>
 
-If you find CDCS useful, please cite:
+If you find CDCS useful, please cite at least one of the following papers as appropriate:
 
 ```
+@article{
+	Self-dual embedding paper coming soon!
+	}
+	
 @article{ZFPGW2016,
 	archivePrefix = {arXiv},
 	eprint = {1609.06068v2},
@@ -87,13 +99,15 @@ If you find CDCS useful, please cite:
 	
 @misc{CDCS,
     author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
-    title        = {{CDCS}: Cone Decomposition Conic Solver, version 1.0},
+    title        = {{CDCS}: Cone Decomposition Conic Solver, version 1.1},
     howpublished = {\url{https://github.com/giofantuzzi/CDCS}},
     month        = Sep,
     year         = 2016
     }
 ```
 A selection of BibTex styles that support arXiv preprints can be found [here](http://arxiv.org/hypertex/bibstyles/).
+
+
 ## Contact us<a name="Contacts"></a>
 To contact us about CDCS, suggest improvements and report bugs, email either [Giovanni Fantuzzi](mailto:gf910@ic.ac.uk?Subject=CDCS) or [Yang Zheng](mailto:yang.zheng@eng.ox.ac.uk?Subject=CDCS).
 
