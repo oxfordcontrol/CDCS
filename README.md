@@ -25,7 +25,7 @@ described in on our papers [_Fast ADMM for Semidefinite Programs with Chordal Sp
 CDCS solves in the standard primal and dual vectorized forms
 
 		minimize 	c'x						maximize 	b'y
-	(1)	subject to	Ax = b,				(2)	subject to	c - A'y = z,	
+	(1)	subject to	Ax = b,				(2)	subject to	A'y + z = c,	
 					x \in K								z \in K*
 
 where the conic constraint `x \in K` are partially decomposable. This means that
@@ -82,11 +82,15 @@ you have any suggestions for improvement, or find any bugs, feel free to [contac
 If you find CDCS useful, please cite at least one of the following papers as appropriate:
 
 ```
-@article{
-	Self-dual embedding paper coming soon!
+@article{{ZFPGWhsde2016,
+    archivePrefix = {arXiv},
+	eprint = {1611.01828},
+	primaryClass = "math-OC",
+	author = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
+	title = {{Fast ADMM for homogeneous self-dual embeddings of sparse SDPs}}
 	}
-	
-@article{ZFPGW2016,
+
+@article{ZFPGWpd2016,
 	archivePrefix = {arXiv},
 	eprint = {1609.06068v2},
 	primaryClass = "math-OC",
