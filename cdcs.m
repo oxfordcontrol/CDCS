@@ -1,25 +1,28 @@
 function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
-
 % CDCS
 %
 % Syntax:
 %
 % [x,y,z,info] = CDCS(At,b,c,K,options)
 %
-% Solve a sparse conic program using chordal decomposition for the semidefinite
+% Solve a sparse conic program using chordal decomposition for the positive semidefinite
 % cones and ADMM. CDCS solves the primal (P) or dual (D) standard forms of
 % the conic problem,
 %
 %         min <c,x>                             max <b,y>
-%   (P)   s.t. Ax = b,                  (D)     s.t. c - A^Ty = z
+%   (P)   s.t. Ax = b,                  (D)     s.t. A^Ty + z = c
 %         x \in K                               z \in K*
 %
-% where A,b and c are the problem date and K is the cone (K* is the dual cone).
+% where A,b and c are the problem data and K is the cone (K* is the dual cone).
+% CDCS supports the following cones: Free, Linear, second-order,
+% Semi-definite, called as called K.f, K.l, K.q, and K.s.
+%
 % The standard form to be solved is specified by the "solver" field of the
 % options structure:
 %
-%   options.solver = 'primal' (default): solve the problem in primal standard form
-%   options.solver = 'dual'            : solve the problem in dual standard form
+%   options.solver = 'hsde' (default): solve the problem in homogeneous self-dual embedding form
+%   options.solver = 'primal'        : solve the problem in primal standard form
+%   options.solver = 'dual'          : solve the problem in dual standard form
 %
 % The chordal decomposition can be carried out in two ways, specified by the
 % "chordalize" option:
@@ -135,8 +138,8 @@ if opts.verbose
     fprintf('Scale data             : %i\n',opts.rescale);
     fprintf('Free variables         : %i                \n',K.f);
     fprintf('Non-negative variables : %i                \n',K.l);
-    fprintf('Second-order cones     : %i (max. size: %i)\n',length(K.q),max(K.q));
-    fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(K.s),max(K.s));
+    fprintf('Second-order cones     : %i (max. size: %i)\n',length(find(K.q ~=0)),max(K.q));
+    fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(find(K.s ~=0)),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));
     fprintf(myline1);

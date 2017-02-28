@@ -13,7 +13,7 @@ z.x  = c;
 z.xh = sparse(length(E),1);
 z.y  = -b;
 z.v  = sparse(length(E),1);
-xi = solveInner(factors,E,z);
+xi   = solveInner(factors,E,z);
 const = 1+c'*xi.x - b'*xi.y;
 xi.x  = xi.x/const; 
 xi.xh = xi.xh/const; 
@@ -49,9 +49,13 @@ function u = solveInner(factors,E,v)
          useBuiltin = ~exist(['cs_ltsolve.' mexext],'file');  
     end
     
+    % Import functions
+    import cdcs_utils.cs_lsolve
+    import cdcs_utils.cs_ltsolve
+    
     if strcmpi(factors.flag,'blk')
         
-        %Cholesky factors and original blocks
+        % Cholesky factors and original blocks
         R  = factors.R;
         A  = factors.A;
         At = factors.At;
@@ -66,11 +70,11 @@ function u = solveInner(factors,E,v)
         % Solve system M*u2=v0 using factors
         z = P.*(v01 + accumarray(E,v02)./2);
         d = A*z;
-        ds= full(d(s,1));                             % permute
+        ds= full(d(s,1));                       % permute
         if(useBuiltin) 
-            p = R'\((R\ds));                    %Native matlab version (slow)
+            p = R'\((R\ds));                    % Native matlab version (slow)
         else
-            p = cs_ltsolve(R,cs_lsolve(R,ds));  %Csparse version (avoids transpose)
+            p = cs_ltsolve(R,cs_lsolve(R,ds));  % Csparse version (avoids transpose)
         end
         p = p(si,1);                            % permute back
         
@@ -105,6 +109,7 @@ function factors = factorKKT(P,At,flag)
 
     if strcmpi(flag,'ldl')
         % TO DO
+        % I don't think ldl decomposition is a good choice for hsde.
         error('Unknown method')
 
     elseif strcmpi(flag,'inv')
@@ -128,16 +133,17 @@ function factors = factorKKT(P,At,flag)
             tmp           = 1:length(s);
             factors.si(s) = tmp; %inverse permutation
         else
+            error('Cholesky decomposition fails ... ')
             % not definite - use LDL
-            M = [spdiags(1./P,0,n,n), sparse(At)
-                 sparse(m,n), sparse(m,m)];
-            [U,D,s] = ldl(M,'upper','vector');
-            factors.flag = 'ldl';
-            factors.L     = U';
-            factors.D     = D;
-            factors.s     = s;
-            tmp           = 1:length(s);
-            factors.si(s) = tmp; %inverse permutation
+            % M = [spdiags(1./P,0,n,n), sparse(At)
+            %     sparse(m,n), sparse(m,m)];
+            % [U,D,s] = ldl(M,'upper','vector');
+            % factors.flag = 'ldl';
+            % factors.L     = U';
+            % factors.D     = D;
+            % factors.s     = s;
+            % tmp           = 1:length(s);
+            % factors.si(s) = tmp; %inverse permutation
         end
     end
 

@@ -1,4 +1,4 @@
-function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opts,At,A,b,c,btr,ctr,E,others)
+function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opts,At,A,b,c,E,others)
 
 % CHECKCONVERGENCE primal/dual infeasible
 % Problem codes 
@@ -7,6 +7,12 @@ function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opt
 % 1: primal infeasible
 % 2: dual infeasible 
 % 3: max number of iterations reached
+
+persistent ctr btr
+if(isempty(btr))
+     ctr = b.';
+     btr = c.'; 
+end
 
 stop = false;
 info.problem = 3;   
@@ -46,8 +52,8 @@ if u.tau > 0   %% feasible problem
     
 else % infeasible or unbounded problem?
     pinfIndex = -btr*u.y;  % index of certificating primal infesibility
-    dinfIndex = ctr*u.x;   % index of certificating dual infesibility
-    if dinfIndex < 0       % dual infeasible
+    dinfIndex = ctr*u.x; % index of certificating dual infesibility
+    if dinfIndex < 0     % dual infeasible
         pfeas    = norm(A*u.x,'fro');
         pfeasTol = -dinfIndex/opts.nc*opts.relTol;
         if pfeas <= pfeasTol  %% a point x that certificates dual infeasiblity

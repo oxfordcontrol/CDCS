@@ -1,9 +1,5 @@
-function [hatu,others] = updateHatU(X,u,v,b,c,xi,solInner,rho,alpha,others)
+function [hatu,others] = updateHatU(X,u,v,b,c,btr,ctr,xi,solInner,rho,alpha,others)
 % update hat{u} = (I+Q)^{-1}(u+v)
-
-% GF: when multiplying a vector v by a scalars , using s.*v is usually quicker
-% than s*v. Also, if v is a real vector (as I assume is the case here), it is
-% better to transpose with v.' instead of v' (avoid conjugation).
 
 % Projection to affine set
    
@@ -20,11 +16,6 @@ function [hatu,others] = updateHatU(X,u,v,b,c,xi,solInner,rho,alpha,others)
     
     w = solInner(v);
     
-    % GF:
-    % Compute transpose only once per iteration (could use persistent variable)
-    ctr = c.';
-    btr = b.';
-    
     const    = ctr*w.x - btr*w.y;            % this is a scalar!
     hatu.x   = w.x - xi.x.*const;
     hatu.xh  = w.xh - xi.xh.*const;
@@ -33,11 +24,8 @@ function [hatu,others] = updateHatU(X,u,v,b,c,xi,solInner,rho,alpha,others)
     hatu.tau = v.kappa + ctr*hatu.x - btr*hatu.y;
     
     %% over-relaxation; see section 3.3 in the paper by O'Donoghue
-    if alpha~=1
-        % GF:
-        % compute only once per iteration (in fact, could compute only once and
-        % for all if alpha does not change between iterations!)
-        beta = 1-alpha;                        
+    if alpha~=1     
+        beta = 1-alpha;  
         hatu.x  = alpha.*hatu.x + beta.*u.x;
         hatu.xh = alpha.*hatu.xh + beta.*u.xh;
         hatu.y  = alpha.*hatu.y + beta.*u.y;

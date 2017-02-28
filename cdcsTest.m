@@ -42,7 +42,7 @@ cdcs(At,b,c,K,opts);
 %                       Conic program with banded SDP
 % ---------------------------------------------------------------------------- %
 % Parameters
-m   = 500;                      % # constraints
+m   = 300;                      % # constraints
 K.f = 23;                       % # free variables
 K.l = 150;                      % # non-negative variables
 K.q = [15, 30];                 % # second-order cones

@@ -11,7 +11,6 @@ switch lower(opts.solver)
         [At,b,c,K,Ech,chstuff,opts] = cdcs_pd.preprocess(At,b,c,K,opts);
         
     case {'hsde'}
-        %error('Homogeneous self-dual embedding solver coming soon!')
         [At,b,c,K,Ech,chstuff,opts] = cdcs_hsde.preprocess(At,b,c,K,opts);
         
     otherwise
