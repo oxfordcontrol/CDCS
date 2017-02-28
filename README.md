@@ -83,20 +83,20 @@ If you find CDCS useful, please cite at least one of the following papers as app
 
 ```
 @article{{ZFPGWhsde2016,
-    archivePrefix = {arXiv},
-	eprint = {1611.01828},
-	primaryClass = "math-OC",
-	author = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
-	title = {{Fast ADMM for homogeneous self-dual embeddings of sparse SDPs}}
-	}
+    archivePrefix= {arXiv},
+    eprint       = {1611.01828},
+    primaryClass = "math-OC",
+    author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
+    title        = {{Fast ADMM for homogeneous self-dual embeddings of sparse SDPs}}
+    }
 
 @article{ZFPGWpd2016,
-	archivePrefix = {arXiv},
-	eprint = {1609.06068v2},
-	primaryClass = "math-OC",
-	author = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
-	title = {{Fast ADMM for Semidefinite Programs with Chordal Sparsity}}
-	}
+    archivePrefix= {arXiv},
+    eprint       = {1609.06068v2},
+    primaryClass = "math-OC",
+    author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
+    title        = {{Fast ADMM for Semidefinite Programs with Chordal Sparsity}}
+    }
 	
 @misc{CDCS,
     author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
