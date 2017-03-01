@@ -216,6 +216,13 @@ pythontex-files-*/
 TSWLatexianTemp*
 
 ## Editors:
+
+# MATLAB editor
+*.asv
+
+# gedit
+*.*~
+
 # WinEdt
 *.bak
 *.sav
@@ -228,5 +235,3 @@ TSWLatexianTemp*
 
 # KBibTeX
 *~[0-9]*
-admmdual/dataChorDec.m
-admmdual/dataChorDec.m
