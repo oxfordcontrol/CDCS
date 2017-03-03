@@ -3,7 +3,10 @@ function [step1,step2,step3,checkConv] = makeADMM(At,b,c,K,Ech,opts)
 % Make ADMM operators
 
 % Decompose cost vector
-if opts.chordalize == 1
+if opts.chordalize == 0
+    % Do nothing!
+    cd = c;
+elseif opts.chordalize == 1
     % Decompose equally
     IA  = accumarray(Ech,1);
     cd  = c./IA; cd  = cd(Ech);

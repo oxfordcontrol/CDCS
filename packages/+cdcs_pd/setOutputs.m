@@ -17,7 +17,10 @@ z = zeros(opts.n_init,1);
 
 
 % Decompose cost vector
-if opts.chordalize == 1
+if opts.chordalize == 0
+    % Do nothing!
+    cd = c;
+elseif opts.chordalize == 1
     % Decompose equally
     IA  = accumarray(E,1);
     cd  = c./IA; cd  = cd(E);    
@@ -63,7 +66,7 @@ end
 % Only complete if problem successfully solved!
 xmat  = blockify(xmat,xsvec,K);
 xtemp = flatten(xtemp,xmat,0);                   % in sedumi format for psdCompletion
-if info.problem==0 && opts.completion==1
+if info.problem==0 && opts.completion==1 && opts.chordalize~=0
     try
         % This will give an error if one PSD cone can in fact be split into multiple
         % separate cones

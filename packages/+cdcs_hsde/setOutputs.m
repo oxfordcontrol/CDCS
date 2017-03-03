@@ -38,7 +38,7 @@ ztemp = flatten(ztemp,zmat,0);
 % Only complete if problem successfully solved!
 xmat  = blockify(xmat,xsvec,K);
 xtemp = flatten(xtemp,xmat,0);                   % in sedumi format for psdCompletion
-if info.problem==0 && opts.completion==1
+if info.problem==0 && opts.completion==1 && opts.chordalize~=0
     try
         % This will give an error if one PSD cone can in fact be split into multiple
         % separate cones

@@ -29,15 +29,15 @@ end
 [At,c,Ats,Cs] = svecData(At,c,K);
 totvars = size(At,1);
 
-% If have SDP variables, decompose
-if ~isempty(K.s) && any(K.s~=0)
+% If required and have SDP variables, decompose
+if ~isempty(K.s) && any(K.s~=0) && opts.chordalize~=0
     [cliques,Ech,Jch,usedvars,s] = chordalDecomposition(Ats,Cs,K);
     
 else
     cliques = [];
-    Ech = (1:nonSDP)';
-    Jch = (1:nonSDP)';
-    usedvars = (1:nonSDP)';
+    Ech = (1:totvars)';
+    Jch = (1:totvars)';
+    usedvars = (1:totvars)';
     s = K.s;
     
 end

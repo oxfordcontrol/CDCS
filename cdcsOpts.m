@@ -15,7 +15,7 @@ function options = cdcsOpts
 % 
 % Chordal decomposition options
 % -----------------------------
-% options.chordalize = 1;         % how to decompose the constraints (1/2)
+% options.chordalize = 1;         % how to decompose the constraints (0/1/2)
 % options.yPenalty   = true;      % add penalty term for Y block to cost
 % options.completion = true;      % complete the unused entries of the decomposed
 %                                   primal variable
