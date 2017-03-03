@@ -1,44 +1,50 @@
 function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
-
 % CDCS
 %
 % Syntax:
 %
-% [x,y,z,info] = CDCS(At,b,c,K,opts)
+% [x,y,z,info] = CDCS(At,b,c,K,options)
 %
-% Solve a sparse conic program using chordal decomposition for the semidefinite
+% Solve a sparse conic program using chordal decomposition for the positive semidefinite
 % cones and ADMM. CDCS solves the primal (P) or dual (D) standard forms of
 % the conic problem,
 %
 %         min <c,x>                             max <b,y>
-%   (P)   s.t. Ax = b,                  (D)     s.t. c - A^Ty = z
+%   (P)   s.t. Ax = b,                  (D)     s.t. A^Ty + z = c
 %         x \in K                               z \in K*
 %
-% where A,b and c are the problem date and K is the cone (K* is the dual cone).
+% where A,b and c are the problem data and K is the cone (K* is the dual cone).
+% CDCS supports the following cones: Free, Linear, second-order,
+% Semi-definite, called as called K.f, K.l, K.q, and K.s.
+%
 % The standard form to be solved is specified by the "solver" field of the
 % options structure:
 %
-%   opts.solver = 'primal' (default): solve the problem in primal standard form
-%   opts.solver = 'dual'            : solve the problem in dual standard form
+%   options.solver = 'hsde' (default): solve the problem in homogeneous self-dual embedding form
+%   options.solver = 'primal'        : solve the problem in primal standard form
+%   options.solver = 'dual'          : solve the problem in dual standard form
 %
 % The chordal decomposition can be carried out in two ways, specified by the
 % "chordalize" option:
 %
-%   opts.chordalize = 1 (default): split the data equally between the cliques
-%   opts.chordalize = 2          : assign data to one clique only
+%   options.chordalize = 1 (default): split the data equally between the cliques
+%   options.chordalize = 2          : assign data to one clique only
 %
 % <a href="matlab:help('cdcsOpts')">Click here for a complete list of options</a>.
 %
 % The output structure 'info' contains the following information:
 %
 % info.problem: - 0: CDCS terminated succesfully 
-%               - 1: the maximum number of iterations was reached
-%               - 2: the ADMM iterations terminated succesfully, but the positive 
-%                 matrix completion algorithm threw an error
+%               - 1: primal infeasibility detected
+%               - 2: dual infeasibility detected
+%               - 3: maximum number of iterations reached
+%               - 4: the ADMM iterations terminated succesfully, but the positive 
+%                    matrix completion algorithm threw an error
 % info.iter: number of iterations
 % info.cost: terminal cost
 % info.pres: terminal primal ADMM residual
 % info.dres: terminal dual ADMM residual
+% info.log : history log of the ADMM residuals, cost, etc.
 % info.time: some timing information (setup, ADMM iterations, cleanup, total)
 %
 % See also CDCSOPTS
@@ -61,10 +67,11 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 
 
 %============================================
-% Solver options
+% Solver options & import cdcs_utils
 %============================================
 tstart = tic;
 opts = cdcsOpts;
+import cdcs_utils.*
 
 
 %============================================
@@ -76,13 +83,13 @@ if(nargin >= 5)
 end
 
 % Checks on specified solver type and method
-if ~any(strcmpi(opts.solver,{'primal','dual'}))
-    error('Unknown opts.solver. Please use "primal" or "dual".')
+if ~any(strcmpi(opts.solver,{'primal','dual','hsde'}))
+    error('Unknown opts.solver. Please use "primal", "dual" or "hsde".')
 end
 
 % Print nice welcoming header
 if opts.verbose
-    myline1 = [repmat('=',1,64),'\n'];
+    [header,myline1,myline2] = printHeader(opts);
     fprintf(myline1)
     fprintf('CDCS by G. Fantuzzi, Y. Zheng -- v1.0\n')
     fprintf(myline1)
@@ -93,15 +100,14 @@ end
 % start timing
 proctime = tic;
 
-% sparsify everything, check cone constraints, rescale
+% sparsify everything, check cone constraints
 [At,b,c,K,opts] = checkInputs(At,b,c,K,opts);
-[At,b,c,K,opts] = rescaleData(At,b,c,K,opts);
 [At,b,c,K,opts] = splitBlocks(At,b,c,K,opts);
 [opts.n,opts.m] = size(At);
 
-% chordal decomposition
+% rescale & chordal decomposition
 Kold = K;
-[At,b,c,K,Ech,cd,chstuff] = chordalize(At,b,c,K,opts);
+[At,b,c,K,Ech,chstuff,opts] = preprocess(At,b,c,K,opts);
 
 % basic decomposed problem dimensions:  no. of cones, no. of vectorized conic
 % variables, and no. of free primal variables
@@ -114,73 +120,69 @@ if (nargin < 6); initVars=[]; end
 [X,Y,Z,others] = makeVariables(K,initVars,opts);
 
 % Make operators for ADMM
-[step1,step2,step3,checkConv] = makeADMM(At,b,c,K,cd,Ech,opts);
+[updateX,updateY,updateZ,checkConvergence] = makeADMM(At,b,c,K,Ech,opts);
 
 % Time setup and display
 proctime = toc(proctime);
 if opts.verbose
-    myline2 = [repmat('-',1,64),'\n'];
+    % Set method to display
+    if strcmpi(opts.solver,'hsde')
+        method = 'homogeneous self-dual embedding';
+    else
+        method = opts.solver;
+    end
     fprintf('done in %.4f seconds.      \n',proctime);
-    fprintf('Standard form          : %s\n',opts.solver);
+    fprintf('Algorithm              : %s\n',method);
     fprintf('Chordalization method  : %i\n',opts.chordalize);
     fprintf('Adaptive penalty       : %i\n',opts.adaptive);
     fprintf('Scale data             : %i\n',opts.rescale);
     fprintf('Free variables         : %i                \n',K.f);
     fprintf('Non-negative variables : %i                \n',K.l);
-    fprintf('Second-order cones     : %i (max. size: %i)\n',length(K.q),max(K.q));
-    fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(K.s),max(K.s));
+    fprintf('Second-order cones     : %i (max. size: %i)\n',length(find(K.q ~=0)),max(K.q));
+    fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(find(K.s ~=0)),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));
-    fprintf(myline1)
+    fprintf(myline1);
+    fprintf(header);
+    fprintf(myline2);
 end
 
 %============================================
 % Run ADMM
 %============================================
-% Display
-if opts.verbose
-    fprintf(' iter |   pres   |   dres   |    cost    |   rho    | time (s) |\n')
-    fprintf(myline2)
-end
-
 admmtime = tic;
-opts.feasCode = 1;
 for iter = 1:opts.maxIter
     
     % Save current iterate for convergence test
     YOld = Y;
     
     % Update block variables
-    [X,others] = step1(X,Y,Z,opts.rho,others);
-    [Y,others] = step2(X,Y,Z,opts.rho,others);
-    [Z,others] = step3(X,Y,Z,opts.rho,others);
+    [X,others] = updateX(X,Y,Z,opts.rho,others);
+    [Y,others] = updateY(X,Y,Z,opts.rho,others);
+    [Z,others] = updateZ(X,Y,Z,opts.rho,others);
     
     % log errors / check for convergence
-    [isConverged,log,opts] = checkConv(X,Y,Z,YOld,others,iter,admmtime,opts);
-    if isConverged
-        opts.feasCode = 0;
+    [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
+    if stop
         break;
     end
 end
 admmtime = toc(admmtime);
-if opts.verbose
-    fprintf(myline1)
-end
 
 %============================================
 % Outputs
 %============================================
 % Variables in sedumi format
 posttime = tic;
-[x,y,z,opts] = setOutputs(X,Y,Z,others,Kold,cd,Ech,chstuff,opts);
+[x,y,z,info,opts] = setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,info,opts);
 posttime = toc(posttime);
 
 % Info
-info.problem = opts.feasCode;              % diagnostic code
 info.iter    = iter;                       % # of iterations
-info.cost    = log.cost;                   % terminal cost
-info.pres    = log.pres;                   % terminal primal ADMM res
-info.dres    = log.dres;                   % terminal dual ADMM res
+info.cost    = log(iter).cost;             % terminal cost
+info.pres    = log(iter).pres;             % terminal primal ADMM res
+info.dres    = log(iter).dres;             % terminal dual ADMM res
+info.log     = log;                        % log of residuals etc
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time
@@ -188,6 +190,7 @@ info.time.total   = toc(tstart);           % total CPU time
 
 % Print summary
 if opts.verbose
+    fprintf(myline1)
     fprintf(' SOLUTION SUMMARY:\n')
     fprintf('------------------\n')
     fprintf(' Termination code     : %11.1d\n',info.problem)

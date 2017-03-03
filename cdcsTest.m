@@ -34,13 +34,15 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+opts.solver = 'hsde';
+cdcs(At,b,c,K,opts);
 
 
 % ---------------------------------------------------------------------------- %
 %                       Conic program with banded SDP
 % ---------------------------------------------------------------------------- %
 % Parameters
-m   = 500;                      % # constraints
+m   = 300;                      % # constraints
 K.f = 23;                       % # free variables
 K.l = 150;                      % # non-negative variables
 K.q = [15, 30];                 % # second-order cones
@@ -59,7 +61,8 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
-
+opts.solver = 'hsde';
+cdcs(At,b,c,K,opts);
 
 % ---------------------------------------------------------------------------- %
 %                              SDPs in SDPLIB
@@ -71,6 +74,8 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
+opts.solver = 'hsde';
+cdcs(At,b,c,K,opts);
 
 % mcp250-1
 fprintf('\nTesting the SDPLIB problem mcp250-1 \n');
@@ -78,6 +83,8 @@ load(['examples',filesep,'mcp250-1.mat'])
 opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
+cdcs(At,b,c,K,opts);
+opts.solver = 'hsde';
 cdcs(At,b,c,K,opts);
 
 % ---------------------------------------------------------------------------- %
@@ -171,6 +178,9 @@ function [At,b,c,K] = bandedSDP(m,K,bandWidth)
 % K        : the cone
 % bandWidth: the bandWidth for each SDP cone (vector of the same length as K.s)
 
+import cdcs_utils.makeConeVariables
+import cdcs_utils.projectK
+import cdcs_utils.clean
 density = 0.35;
 
 % Check cone

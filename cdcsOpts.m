@@ -6,7 +6,7 @@ function options = cdcsOpts
 %
 % Generic solver options
 % ----------------------
-% options.solver     = 'primal';  % which solver (primal/dual)?
+% options.solver     = 'hsde';    % which solver (primal/dual/hsde)
 % options.relTol     = 1e-4;      % tolerance
 % options.rescale    = true;      % scale data to improve convergence
 % options.verbose    = 1;         % print or silent
@@ -15,7 +15,7 @@ function options = cdcsOpts
 % 
 % Chordal decomposition options
 % -----------------------------
-% options.chordalize = 1;         % how to decompose the constraints (1/2)
+% options.chordalize = 1;         % how to decompose the constraints (0/1/2)
 % options.yPenalty   = true;      % add penalty term for Y block to cost
 % options.completion = true;      % complete the unused entries of the decomposed
 %                                   primal variable
@@ -43,7 +43,7 @@ function options = cdcsOpts
 
 
 % Create options structure
-options.solver     = 'primal';  % which solver (primal/dual)?
+options.solver     = 'hsde';    % which solver (primal/dual/hsde)
 options.relTol     = 1e-4;      % tolerance
 options.rescale    = true;      % scale data to improve convergence
 options.verbose    = 1;         % print or silent
@@ -60,3 +60,7 @@ options.rhoMax     = 1e6;       % maximum penalty parameter
 options.rhoMin     = 1e-6;      % minimum penalty parameter
 options.rhoIt      = 10;        % if pres/dres>mu (<mu) mu for rhoIt iterations, adapt rho
 options.KKTfact    = 'blk';     % Options for KKT systems
+
+% the following is for self-dual embedding
+options.alpha      = 1.5;       % over relaxation, must lie in (0,2); 1.5 is recommanded
+

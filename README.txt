@@ -4,11 +4,15 @@
 
 CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB solver for sparse
 conic programs with partially decomposable conic constraints. CDCS implements the
-alternating direction method of multipliers (ADMM) described in on our paper: 
-"Fast ADMM for Semidefinite Programs with Chordal Sparsity" available from
-(https://arxiv.org/pdf/1609.06068v2.pdf).
+alternating direction method of multipliers (ADMM) described in on our papers
+ 
+* "Fast ADMM for Semidefinite Programs with Chordal Sparsity" available from
+(https://arxiv.org/pdf/1609.06068v2.pdf)
 
-Current version: 1.0
+* "Fast ADMM for homogeneous self-dual embeddings of sparse SDPs" available from
+(https://arxiv.org/abs/1611.01828)
+
+Current version: 1.1
 Release notes: CDCS is based on a temporary research code called ADMM-PDCP, which
                is no longer maintained. If you downloaded ADMM-PDCP, please 
                replace it with CDCS.
@@ -32,7 +36,7 @@ Release notes: CDCS is based on a temporary research code called ADMM-PDCP, whic
 CDCS solves in the standard primal and dual vectorized forms
 
 		minimize 	c'x						maximize 	b'y
-	(1)	subject to	Ax = b,				(2)	subject to	c - A'y = z,	
+	(1)	subject to	Ax = b,				(2)	subject to	A'y + z = c,	
 					x \in K								z \in K*
 
 where the conic constraint `x \in K` are partially decomposable. This means that
@@ -87,9 +91,17 @@ us (see the Contact Us section below).
                                 HOW TO CITE
 ================================================================================
 
-If you find CDCS useful, please cite it with
+If you find CDCS useful, please cite
 
-@article{ZFPGW2016,
+@article{{ZFPGWhsde2016,
+    archivePrefix = {arXiv},
+	eprint = {1611.01828},
+	primaryClass = "math-OC",
+	author = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
+	title = {{Fast ADMM for homogeneous self-dual embeddings of sparse SDPs}}
+	}
+
+@article{ZFPGWpd2016,
 	archivePrefix = {arXiv},
 	eprint = {1609.06068v2},
 	primaryClass = "math-OC",

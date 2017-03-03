@@ -1,7 +1,11 @@
-function [isConverged,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,opts,admmtime)
+function [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,opts,admmtime)
 
 % CHECKCONVERGENCE
 % Use the basic convergence test in the Boyd survey paper
+% Primal/dual solver cannot detect infeasibility so error codes can only be
+% 0: problem successfully solved
+% 3: max number of iterations reached
+
 
 persistent itPinf itDinf
 if iter == 1
@@ -11,6 +15,8 @@ if iter == 1
     itDinf = 0; % number of iterations for which pinf/dinf > eta
 end
 
+% Import functions
+import cdcs_utils.flatten
 
 % Extract some variables
 Ex = flatten(Y.vec,X.blk);
@@ -47,13 +53,15 @@ end
 
 %stopping criteria
 if(max(pres,dres)<opts.relTol)
-    isConverged = true;
+    stop = true;
+    info.problem = 0;
 else
-    isConverged = false;
+    stop = false;
+    info.problem = 3;
 end
 
 %progress message
-if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || isConverged)
+if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || stop)
     fprintf('%5d | %8.2e | %8.2e | %9.2e  | %8.2e | %8.2e |\n',...
         iter,pres,dres,cost,opts.rho,toc(admmtime));
 end
@@ -82,8 +90,8 @@ if opts.adaptive
 end
 
 % Log errors
-log.pres = pres;
-log.dres = dres;
-log.cost = cost;
+log(iter).pres = pres;
+log(iter).dres = dres;
+log(iter).cost = cost;
 
 end

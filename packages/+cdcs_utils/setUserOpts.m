@@ -4,7 +4,6 @@ function opts = setUserOpts(opts,userOpts)
 %
 % Set user options
 
-
 if ~isstruct(userOpts)
     error('Input ''options'' must be a structure.');
 else
@@ -17,3 +16,6 @@ else
         end
     end
 end
+
+% make solver lowercase
+opts.solver = lower(opts.solver);
