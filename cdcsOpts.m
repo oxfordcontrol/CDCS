@@ -6,7 +6,7 @@ function options = cdcsOpts
 %
 % Generic solver options
 % ----------------------
-% options.solver     = 'hsde';    % which solver (primal/dual/hsde)
+% options.solver     = 'hsde';    % which solver (primal/dual/hsde/sos)
 % options.relTol     = 1e-4;      % tolerance
 % options.rescale    = true;      % scale data to improve convergence
 % options.verbose    = 1;         % print or silent
