@@ -13,8 +13,8 @@ info.problem = 3;
 
 if u.tau > 0   %% feasible problem
     x = u.x./u.tau; y = u.y./u.tau;
-    dcost = (b'*y);%/opts.scaleFactors.sc_cost;        %% dual cost
-    pcost = (c'*x);%/opts.scaleFactors.sc_cost;        %% primal cost
+    dcost = (b'*y)/opts.scaleFactors.sc_cost;        %% dual cost
+    pcost = (c'*x)/opts.scaleFactors.sc_cost;        %% primal cost
     
     % this is based on the scaled data
     presi = norm(At'*x - b,'fro')./max([1,opts.nAt,opts.nb]);
@@ -40,7 +40,7 @@ if u.tau > 0   %% feasible problem
         s = opts.rho*norm(utmp-uoldtmp,'fro')./max(norm(utmp,'fro'),norm(vtmp,'fro'));
         
         % Update ADMM penalty parameter
-        opts = updatePenalty(opts,r,s,iter);
+        % opts = updatePenalty(opts,r,s,iter);  % something is wrong with this option?
         
     end
     
@@ -79,9 +79,9 @@ if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || stop)
 end  
 
 % log information
-log(iter).pres = presi;
-log(iter).dres = dresi;
-log(iter).cost = pcost;   %% use primal cost
+log(iter).pres  = presi;
+log(iter).dres  = dresi;
+log(iter).cost  = pcost;   %% use primal cost
 log(iter).dcost = dcost;
 
 % end main

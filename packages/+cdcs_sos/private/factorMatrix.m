@@ -131,10 +131,10 @@ function factors = factorKKT(P,A1,flag)
             if p==0
                 %For maximum efficiency in projection, store both
                 %the permutation s and its inverse permutation
-                factors.flag = 'blk';
+                factors.flag  = 'blk';
                 factors.R     = R;
-                factors.A1     = A1;
-                factors.A1t    = A1';
+                factors.A1    = A1;
+                factors.A1t   = A1';
                 factors.P     = P;
                 factors.s     = s;
                 tmp           = 1:length(s);

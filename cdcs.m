@@ -23,7 +23,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %   options.solver = 'hsde' (default): solve the problem in homogeneous self-dual embedding form
 %   options.solver = 'primal'        : solve the problem in primal standard form
 %   options.solver = 'dual'          : solve the problem in dual standard form
-%   options.solver = 'sos'          : solve the problem arising in Sum-of-squares programs
+%   options.solver = 'sos'           : solve the problem arising from Sum-of-squares programs
 %
 % The chordal decomposition can be carried out in two ways, specified by the
 % "chordalize" option:

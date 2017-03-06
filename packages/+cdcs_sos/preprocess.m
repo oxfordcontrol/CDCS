@@ -20,7 +20,7 @@ stuff = [];
 %--------------------------------------------
 % Rescale data
 %--------------------------------------------
-% [At,b,c,K,opts] = rescaleData(At,b,c,K,opts); % doesn't work well!
+[At,b,c,K,opts] = rescaleData(At,b,c,K,opts); % doesn't work well!
 
 % svec form
 [At,c,~,~] = svecData(At,c,K);
