@@ -72,7 +72,7 @@ function u = solveInner(factors,At,v)
         si = factors.si;
         
         % First find v0 to solve system like M*u2 = v0
-        v2 = -At'*v.x + v.y;
+        v2 = -(At.'*v.x) + v.y;
         
         % Solve system (I+AA')*u2=v2, i.e., (P+A1A1')u2 = v2 using factors
         z = P.*v2;

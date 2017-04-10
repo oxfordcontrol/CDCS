@@ -112,9 +112,11 @@ function [S,nPosEigs] = projectPSD(S)
         return;
     end
     % matrix case
-    [U,E] = eig((S+S')/2);
+    S = S./2;
+    S = S+S.';
+    [U,E] = eig(S);
     ind = diag(E)>0;
     UsE = U(:,ind)*sqrt(E(ind,ind));
-    S   = UsE*UsE';
+    S   = UsE*UsE.';
     nPosEigs = nnz(ind);   
 end
