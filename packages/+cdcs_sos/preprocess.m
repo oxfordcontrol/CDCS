@@ -20,11 +20,21 @@ stuff = [];
 %--------------------------------------------
 % Rescale data
 %--------------------------------------------
-[At,b,c,K,opts] = rescaleData(At,b,c,K,opts); % doesn't work well!
-
 % svec form
 [At,c,~,~] = svecData(At,c,K);
 [opts.n,opts.m] = size(At);
+
+% original norms, used repeatly in convergence checking
+opts.nAt_init = norm(At,'fro');
+opts.nb_init  = norm(b,'fro');
+opts.nc_init  = norm(c,'fro');
+
+% Rescale
+[At,b,c,K,opts] = rescaleData(At,b,c,K,opts); % doesn't work well!
+
+% % svec form
+% [At,c,~,~] = svecData(At,c,K);
+% [opts.n,opts.m] = size(At);
 
 % Check if At,b,C are indeed sparse - if not, make full for speed!
 [n,m] = size(At);

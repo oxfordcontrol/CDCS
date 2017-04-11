@@ -17,17 +17,28 @@ if u.tau > 0   %% feasible problem
     dcost = (b.'*y)/opts.scaleFactors.sc_cost;        %% dual cost
     pcost = (c.'*x)/opts.scaleFactors.sc_cost;        %% primal cost
     
-    % this is based on the scaled data
-    presi = norm(At.'*x - b,'fro')./max([1,opts.nAt,opts.nb]);
-    gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
+%     % ======================================================================== %
+%     % Scaled residuals, unscaled cost
+%     presi = norm(At.'*x - b,'fro')./max([1,opts.nAt,opts.nb]);
+%     gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
+%     
+%     % GF: I think the dual residual is wrong, will need a factor of \rho for the
+%     %     variable v.x because in the code v.x is the unscaled multiplier while
+%     %     in the algorithm by O'Donoghue et al it is scaled.
+%     % Uncomment the first line if v is the unscaled multipler, the second one if
+%     % v is the scaled multiplier.
+%     %     dresi = norm((At*y + (v.x./u.tau)./opts.rho- c),'fro')./max([1,opts.nAt,opts.nc]);
+%     dresi = norm((At*y + (v.x./u.tau) - c),'fro')./max([1,opts.nAt,opts.nc]);
+%     % ======================================================================== %
     
-    % GF: I think the dual residual is wrong, will need a factor of \rho for the
-    %     variable v.x because in the code v.x is the unscaled multiplier while
-    %     in the algorithm by O'Donoghue et al it is scaled.
-    % Uncomment the first line if v is the unscaled multipler, the second one if
-    % v is the scaled multiplier.
-    %     dresi = norm((At*y + (v.x./u.tau)./opts.rho- c),'fro')./max([1,opts.nAt,opts.nc]);
-    dresi = norm((At*y + (v.x./u.tau) - c),'fro')./max([1,opts.nAt,opts.nc]);
+    % Residuals before rescaling (O'Donoghue et al, Section 5)
+    % Use same normalization as O'Donoghue et al
+    pk  = (At.'*x - b).*opts.scaleFactors.E;
+    presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
+    dk  = (At*y + (v.x./u.tau) - c).*opts.scaleFactors.D;
+    dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
+    gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
+    
     
     if max([presi,dresi,gap]) < opts.relTol
         info.problem = 0;
@@ -62,8 +73,12 @@ else % infeasible or unbounded problem?
     pinfIndex = b.'*u.y;  % index of certificating primal infesibility
     dinfIndex = -c.'*u.x; % index of certificating dual infesibility
     if dinfIndex > 0    % dual infeasible
-        pfeas    = norm(At'*u.x,'fro');
-        pfeasTol = dinfIndex/opts.nc*opts.relTol;
+        % Scaled variables
+%         pfeas    = norm(At'*u.x,'fro');
+%         pfeasTol = dinfIndex/opts.nc*opts.relTol;
+        % Original variables
+        pfeas    = norm( (At'*u.x).*opts.scaleFactors.E ,'fro');
+        pfeasTol = dinfIndex/opts.nc_init/opts.scaleFactors.sc_c*opts.relTol;
         if pfeas <= pfeasTol  %% a point x that certificates dual infeasiblity
             info.problem = 2;
             stop = true;
@@ -71,12 +86,16 @@ else % infeasible or unbounded problem?
     end
     if pinfIndex > 0   % primal infeasible
         % ======================================================================== %
+        % Scaled variables
         % GF: uncomment the first line if v is the unscaled multiplier, the
         %     second one if v is the scaled multiplier
         % dfeas    = norm(At*u.y+v.x./opts.rho,'fro');
-        dfeas    = norm(At*u.y+v.x,'fro');
+        % dfeas    = norm(At*u.y+v.x,'fro');
+        % dfeasTol = pinfIndex/opts.nb*opts.relTol;
         % ======================================================================== %
-        dfeasTol = pinfIndex/opts.nb*opts.relTol;
+        % Original variables
+        dfeas    = norm( (At*u.y+v.x).*opts.scaleFactors.D ,'fro');
+        dfeasTol = pinfIndex/opts.nb_init/opts.scaleFactors.sc_b*opts.relTol;
         if dfeas <= dfeasTol  %% a point y that certificates primal infeasiblity
             info.problem = 1;
             stop = true;

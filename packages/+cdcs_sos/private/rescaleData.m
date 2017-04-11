@@ -40,7 +40,8 @@ if opts.rescale
     end
     if sum(K.s)>0
         for i = 1:length(K.s)
-            nvars = K.s(i)^2;
+            %nvars = K.s(i)^2;
+            nvars = K.s(i)*(K.s(i)+1)/2;
             D(count+1:count+nvars) = mean(D(count+1:count+nvars));
             count = count + nvars;
         end

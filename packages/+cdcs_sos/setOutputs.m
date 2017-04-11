@@ -19,6 +19,13 @@ xtmp = Y.x/Y.tau;
 ytmp = Y.y/Y.tau;
 ztmp = Z.x/X.tau; 
 
+% Scale solution
+% Scale before blockify because rescaling was done after svec operation in
+% rescaleData.m
+xtmp = (xtmp./opts.scaleFactors.D)./opts.scaleFactors.sc_b;
+ytmp = (ytmp./opts.scaleFactors.E)./opts.scaleFactors.sc_c;
+ztmp = (ztmp.*opts.scaleFactors.D)./opts.scaleFactors.sc_c;
+
 % block value
 [xmat,zmat] = makeConeVariables(K);        % blockified
 xmat  = blockify(xmat,xtmp,K);
@@ -26,10 +33,10 @@ zmat  = blockify(zmat,ztmp,K);
 xtmp = flatten(xmat,xmat,0); 
 ztmp = flatten(zmat,zmat,0); 
 
-% Scale solution
-xtmp = (xtmp./opts.scaleFactors.D)./opts.scaleFactors.sc_b;
-ytmp = (ytmp./opts.scaleFactors.E)./opts.scaleFactors.sc_c;
-ztmp = (ztmp.*opts.scaleFactors.D)./opts.scaleFactors.sc_c;
+% % Scale solution
+% xtmp = (xtmp./opts.scaleFactors.D)./opts.scaleFactors.sc_b;
+% ytmp = (ytmp./opts.scaleFactors.E)./opts.scaleFactors.sc_c;
+% ztmp = (ztmp.*opts.scaleFactors.D)./opts.scaleFactors.sc_c;
 
 % Assign solution to used variables
 x(opts.usedvars) = xtmp;
