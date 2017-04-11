@@ -24,9 +24,9 @@ described in our papers [_Fast ADMM for Semidefinite Programs with Chordal Spars
 
 CDCS solves in the standard primal and dual vectorized forms
 
-		minimize 	c'x						maximize 	b'y
+		minimize 	c'x					maximize 	b'y
 	(1)	subject to	Ax = b,				(2)	subject to	A'y + z = c,	
-					x \in K								z \in K*
+				x \in K							z \in K*
 
 where the conic constraint `x \in K` are partially decomposable. This means that
 `x \in K` can be replaced by `p` smaller conic constraints `x_1 \in K_1`, ..., 
