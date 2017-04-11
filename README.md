@@ -74,7 +74,7 @@ for a complete list of solver options.
 **NOTE:** _this is a research code, and is under active development. You may find 
 some undocumented inputs and options that are being used for development 
 purposes, in the hope that they will become part of the "official" release. If 
-you have any suggestions for improvement, or find any bugs, feel free to [contact us](Contacts)!_
+you have any suggestions for improvement, or find any bugs, feel free to [contact us](#Contacts)!_
 
 
 ## How to cite<a name="References"></a>
