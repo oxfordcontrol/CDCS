@@ -119,10 +119,15 @@ end
 % log information
 % Use preallocation for speed
 if iter==1
-    [log(1:opts.maxIter,1).pres] = deal(0);
-    [log(1:opts.maxIter,1).dres] = deal(0);
-    [log(1:opts.maxIter,1).cost] = deal(0);
-    [log(1:opts.maxIter,1).dcost] = deal(0);
+	% Much faster preallocation method
+    cc = cell(opts.maxIter,1);
+    log = struct('pres',cc,'dres',cc,'cost',cc,'dcost',cc);
+    
+    % Old
+    %     [log(1:opts.maxIter,1).pres] = deal(0);
+    %     [log(1:opts.maxIter,1).dres] = deal(0);
+    %     [log(1:opts.maxIter,1).cost] = deal(0);
+    %     [log(1:opts.maxIter,1).dcost] = deal(0);
 end
 log(iter).pres  = presi;
 log(iter).dres  = dresi;
