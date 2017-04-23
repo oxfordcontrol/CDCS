@@ -4,11 +4,17 @@ function [hatu,others] = updateHatU(X,u,v,b,c,btr,ctr,xi,solInner,rho,alpha,othe
 % Projection to affine set
    
     %% v = u + v; v = u+v/rho?
-    v.x  = u.x + (v.x)./rho;
-    v.xh = u.xh +(v.xh)./rho;
-    v.y  = u.y + (v.y)./rho;
-    v.v  = u.v + (v.v)./rho;
-    v.kappa  = u.tau+v.kappa./rho;
+%     v.x  = u.x + (v.x)./rho;
+%     v.xh = u.xh +(v.xh)./rho;
+%     v.y  = u.y + (v.y)./rho;
+%     v.v  = u.v + (v.v)./rho;
+%     v.kappa  = u.tau+v.kappa./rho;
+    
+    v.x  = u.x  + v.x;
+    v.xh = u.xh + v.xh;
+    v.y  = u.y  + v.y;
+    v.v  = u.v  + v.v;
+    v.kappa  = u.tau+v.kappa;
     
     %% solving (I+Q)w = v
     v.x = v.x - (v.kappa).*c;

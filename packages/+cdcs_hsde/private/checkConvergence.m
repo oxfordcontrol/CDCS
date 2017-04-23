@@ -27,22 +27,22 @@ if u.tau > 0   %% feasible problem
     end
     
     % adpative penalty?
-    % GF: Only adapt penalty if not stopping after this iteration...
-    if opts.adaptive && ~stop
-        
-        % standard ADMM residual according to Boyd's paper
-        utmp = vertcat(u.x,u.xh,u.y,u.v,u.tau); 
-        vtmp = vertcat(v.x,v.xh,v.y,v.v,v.kappa);
-        hatutmp = vertcat(hatu.x,hatu.xh,hatu.y,hatu.v,hatu.tau);
-        uoldtmp = vertcat(uold.x,uold.xh,uold.y,uold.v,uold.tau);
-        
-        r = norm(utmp-hatutmp,'fro')./max(norm(utmp,'fro'),norm(hatutmp,'fro'));
-        s = opts.rho*norm(utmp-uoldtmp,'fro')./max(norm(utmp,'fro'),norm(vtmp,'fro'));
-        
-        % Update ADMM penalty parameter
-        opts = updatePenalty(opts,r,s);
-        
-    end
+    % YZ: remove adaptive penalty, hsde is independent of \rho
+%     if opts.adaptive && ~stop
+%         
+%         % standard ADMM residual according to Boyd's paper
+%         utmp = vertcat(u.x,u.xh,u.y,u.v,u.tau); 
+%         vtmp = vertcat(v.x,v.xh,v.y,v.v,v.kappa);
+%         hatutmp = vertcat(hatu.x,hatu.xh,hatu.y,hatu.v,hatu.tau);
+%         uoldtmp = vertcat(uold.x,uold.xh,uold.y,uold.v,uold.tau);
+%         
+%         r = norm(utmp-hatutmp,'fro')./max(norm(utmp,'fro'),norm(hatutmp,'fro'));
+%         s = opts.rho*norm(utmp-uoldtmp,'fro')./max(norm(utmp,'fro'),norm(vtmp,'fro'));
+%         
+%         % Update ADMM penalty parameter
+%         opts = updatePenalty(opts,r,s);
+%         
+%     end
     
 else % infeasible or unbounded problem?
     pinfIndex = -btr*u.y;  % index of certificating primal infesibility
@@ -79,49 +79,55 @@ if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || stop)
 end  
 
 % log information
-log(iter).pres = presi;
-log(iter).dres = dresi;
-log(iter).cost = pcost;   %% use primal cost
+% Use preallocation for speed
+if iter==1
+    cc = cell(opts.maxIter,1);
+    log = struct('pres',cc,'dres',cc,'cost',cc,'dcost',cc);
+end
+log(iter).pres  = presi;
+log(iter).dres  = dresi;
+log(iter).cost  = pcost;   %% use primal cost
 log(iter).dcost = dcost;
 
 % end main
 end
 
+
 % ============================================================================ %
 % Nested functions
 % ============================================================================ %
-
-function opts = updatePenalty(opts,pres,dres)
-% Update penaly
-
-    persistent itPinf itDinf
-    if isempty(itPinf) || isempty(itDinf)
-        % initialize persistent iteration counters when entering for the first
-        % time (persistent variables are empty and not zero when declared)
-        itPinf = 0; % number of iterations for which pinf/dinf <= eta
-        itDinf = 0; % number of iterations for which pinf/dinf > eta
-    end
-
-    if opts.adaptive
-        resRat = pres/dres;
-        if resRat >= opts.mu
-            itPinf = itPinf+1;
-            itDinf = 0;
-            if itPinf >= opts.rhoIt
-                % ratio of pinf and dinf remained large for long => rescale rho
-                itPinf = 0;
-                opts.rho = min(opts.rho*opts.tau, opts.rhoMax);
-            end
-        elseif 1/resRat >= opts.mu
-            itDinf = itDinf+1;
-            itPinf = 0;
-            if itDinf >= opts.rhoIt
-                % ratio of pinf and dinf remained small for long => rescale rho
-                itDinf = 0;
-                opts.rho = max(opts.rho/opts.tau, opts.rhoMin);
-            end
-        end
-    end
-
-end
+% % 
+% function opts = updatePenalty(opts,pres,dres)
+% % Update penaly
+% 
+%     persistent itPinf itDinf
+%     if isempty(itPinf) || isempty(itDinf)
+%         % initialize persistent iteration counters when entering for the first
+%         % time (persistent variables are empty and not zero when declared)
+%         itPinf = 0; % number of iterations for which pinf/dinf <= eta
+%         itDinf = 0; % number of iterations for which pinf/dinf > eta
+%     end
+% 
+%     if opts.adaptive
+%         resRat = pres/dres;
+%         if resRat >= opts.mu
+%             itPinf = itPinf+1;
+%             itDinf = 0;
+%             if itPinf >= opts.rhoIt
+%                 % ratio of pinf and dinf remained large for long => rescale rho
+%                 itPinf = 0;
+%                 opts.rho = min(opts.rho*opts.tau, opts.rhoMax);
+%             end
+%         elseif 1/resRat >= opts.mu
+%             itDinf = itDinf+1;
+%             itPinf = 0;
+%             if itDinf >= opts.rhoIt
+%                 % ratio of pinf and dinf remained small for long => rescale rho
+%                 itDinf = 0;
+%                 opts.rho = max(opts.rho/opts.tau, opts.rhoMin);
+%             end
+%         end
+%     end
+% 
+% end
 
