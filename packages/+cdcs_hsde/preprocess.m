@@ -33,9 +33,13 @@ else
     Ech = (1:totvars)';
     Jch = (1:totvars)';
     usedvars = (1:totvars)';
-    s = K.s;
-    
+    s = K.s;   
 end
+
+% original norms, used repeatly in convergence checking
+opts.nAt_init = norm(At,'fro');
+opts.nb_init  = norm(b,'fro');
+opts.nc_init  = norm(c,'fro');
 
 %--------------------------------------------
 % Rescale data
@@ -78,5 +82,3 @@ stuff.totvars  = totvars;
 opts.nAt = norm(At,'fro');
 opts.nb  = norm(b,'fro');
 opts.nc  = norm(c,'fro');
-
-

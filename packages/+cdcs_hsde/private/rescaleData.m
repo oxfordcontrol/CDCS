@@ -116,8 +116,7 @@ else
     opts.scaleFactors.E2 = 1;
     opts.scaleFactors.sc_b = 1;
     opts.scaleFactors.sc_c = 1;
-    opts.scaleFactors.sc_cost = 1;
-    
+    opts.scaleFactors.sc_cost = 1;  
 end
 
 % End function

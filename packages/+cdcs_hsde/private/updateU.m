@@ -4,8 +4,8 @@ function [u,others] =updateU(hatu,Y,v,others,K,rho)
     
     % cone variables: projection
     X = others.X;
-    %X = cdcs_utils.blockify(X,hatu.xh-v.xh./rho,K);              % blockxified variables
-    X = cdcs_utils.blockify(X,hatu.xh-v.xh,K);              % blockxified variables
+    %X = cdcs_utils.blockify(X,hatu.xh-v.xh./rho,K);          % blockxified variables
+    X = cdcs_utils.blockify(X,hatu.xh-v.xh,K);                % blockxified variables
     X = cdcs_utils.projectK(X,K,0);    
     u.xh = cdcs_utils.flatten(v.xh,X);
     

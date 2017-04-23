@@ -134,7 +134,9 @@ if opts.verbose
     fprintf('done in %.4f seconds.      \n',proctime);
     fprintf('Algorithm              : %s\n',method);
     %fprintf('Chordalization method  : %i\n',opts.chordalize);
+    if any(strcmpi(opts.solver,{'primal','dual'}))
     fprintf('Adaptive penalty       : %i\n',opts.adaptive);
+    end
     fprintf('Scale data             : %i\n',opts.rescale);
     fprintf('Free variables         : %i                \n',K.f);
     fprintf('Non-negative variables : %i                \n',K.l);
