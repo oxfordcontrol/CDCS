@@ -16,17 +16,17 @@ if u.tau > 0   %% feasible problem
     dcost = (btr*y)/opts.scaleFactors.sc_cost;        %% dual cost
     pcost = (ctr*x)/opts.scaleFactors.sc_cost;        %% primal cost
     
-%     % this is based on the scaled data
-%     presi = norm(A*x - b,'fro')./max([1,opts.nAt,opts.nb]);
-%     dresi = norm((At*y + accumarray(E,u.v./u.tau)- c),'fro')./max([1,opts.nAt,opts.nc]);
-%     gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
+    % this is based on the scaled data
+     presi = norm(A*x - b,'fro')./(1+opts.nb);
+     dresi = norm((At*y + accumarray(E,u.v./u.tau)- c),'fro')./(1+opts.nc);
+     gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
     
     % residual based on unscaled data
-    pk  = (A*x - b).*opts.scaleFactors.E1;
-    presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
-    dk  = (At*y + accumarray(E,u.v./u.tau) - c).*opts.scaleFactors.D1;
-    dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
-    gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
+%     pk  = (A*x - b).*opts.scaleFactors.E1;
+%     presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
+%     dk  = (At*y + accumarray(E,u.v./u.tau) - c).*opts.scaleFactors.D1;
+%     dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
+%     gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
  
     if max([presi,dresi,gap]) < opts.relTol
         info.problem = 0;
