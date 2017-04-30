@@ -3,7 +3,8 @@ function [step1,step2,step3,checkConv] = makeADMM(At,b,c,K,Ech,opts)
 % Make ADMM operators
 
 % factorization 
-[xi,solInner] = factorMatrix(At,b,c,Ech,opts.KKTfact);
+%[xi,solInner] = factorMatrix(At,b,c,Ech,opts.KKTfact);
+[xi,solInner] = factorMatrixTest(At,b,c,Ech,opts.scaleFactors.D1,opts.scaleFactors.E2,opts.KKTfact);
 
 % Update steps
 btr = b.';
