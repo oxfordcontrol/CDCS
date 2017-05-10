@@ -1,16 +1,11 @@
-function [eta,solInner] = factorMatrix(At,b,c,K,flag)
+ function [eta,solInner] = factorMatrix(At,b,c,K,flag)
 % generate projector onto affine constraints
 % Here, we do not consider the modification of H in the scaling process
 
 % check orthogonality A = [A1 A2], A2 correponds to PSD cone variabels
-A  = At';
-A1 = A(:,1: K.f+K.l); 
-A2 = A(:,K.f+K.l+1:end);
-D  = A2*A2';
 
-if ~isdiag(D)
-    error('Constraints are not orthogonal!')
-end
+
+[A1,D] = diviConstraint(At,K);
 
 Ddiag = diag(D);   %% store the diagonal elements
 P = 1./(1+Ddiag);
@@ -31,8 +26,38 @@ eta.y  = eta.y/const;
 % Set function handle
 solInner = @(v)solveInner(factors,At,v);
 
-end
+ end
 
+%----------------------
+% divide the constraints
+%----------------------
+function [A1,D] = diviConstraint(At,K)
+    % divide the equality constraints
+    % Ax = b --> [A1 A2] x = b
+    % such that D = A2*A2' is diagonal
+    
+    A  = At';
+    nCone = length(K.f) + length(K.l) + length(K.q) + length(K.s);
+    nConeVars = cumsum([0,K.f, K.l, K.q, K.s.*(K.s+1)/2]);
+    
+    for i = nCone:-1:1     %% this strategy doesn't need to reorder the consstraints Ax = b, 
+                           % but this may be improved by reordering      
+        tmpA = A(:,nConeVars(i)+1:nConeVars(i+1));
+        if ~isdiag(tmpA*tmpA')   %% nondiagonal part
+            dFlag = i + 1;
+            break
+        end
+        dFlag = i;
+    end
+    
+    A1 = A(:,1:nConeVars(dFlag)); 
+    A2 = A(:,nConeVars(dFlag)+1:end);
+    D  = A2*A2';
+    if ~isdiag(D) || isempty(D)
+        error('No orthognal constraints; please use another option: hsde!')
+    end 
+end
+ 
 %----------------------
 % solveInner
 %----------------------
