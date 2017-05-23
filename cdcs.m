@@ -145,6 +145,8 @@ if opts.verbose
     fprintf('Affine constraints     : %i                \n',opts.m);
     if any(strcmpi(opts.solver,{'primal','dual','hsde'}))
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));  
+    else
+    fprintf('Nonorthogonal dimension: %i                \n',opts.sos.NonOrth);
     end
     fprintf(myline1);
     fprintf(header);

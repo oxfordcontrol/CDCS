@@ -18,13 +18,14 @@ factors = factorKKT(P,A1,flag);
 % Compute a useful vector
 z.x  = c; 
 z.y  = -b;
-eta = solveInner(factors,At,z);
+A = At';
+eta = solveInner(factors,At,A,z);
 const = 1+c'*eta.x - b'*eta.y;
 eta.x  = eta.x/const; 
 eta.y  = eta.y/const; 
 
 % Set function handle
-solInner = @(v)solveInner(factors,At,v);
+solInner = @(v)solveInner(factors,At,A,v);
 
  end
 
@@ -61,7 +62,7 @@ end
 %----------------------
 % solveInner
 %----------------------
-function u = solveInner(factors,At,v)
+function u = solveInner(factors,At,A,v)
     % Solve system of form
     %
     % [  I  -A'] [u1] = [v1]
@@ -84,7 +85,7 @@ function u = solveInner(factors,At,v)
     
     if factors.diagFlag == true   %% AA' is diagonal
         P    = factors.P;
-        u.y  = P.*(v.y - At'*v.x);
+        u.y  = P.*(v.y - A*v.x);
         u.x  = v.x + At*u.y;
     
     elseif strcmpi(factors.flag,'blk')
@@ -97,7 +98,7 @@ function u = solveInner(factors,At,v)
         si = factors.si;
         
         % First find v0 to solve system like M*u2 = v0
-        v2 = -(At.'*v.x) + v.y;
+        v2 = -(A*v.x) + v.y;
         
         % Solve system (I+AA')*u2=v2, i.e., (P+A1A1')u2 = v2 using factors
         z = P.*v2;

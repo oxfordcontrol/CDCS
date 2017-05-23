@@ -17,9 +17,6 @@ end
 Ech = [];
 stuff = [];
 
-%--------------------------------------------
-% Rescale data
-%--------------------------------------------
 % svec form
 [At,c,~,~] = svecData(At,c,K);
 [opts.n,opts.m] = size(At);
@@ -29,12 +26,22 @@ opts.nAt_init = norm(At,'fro');
 opts.nb_init  = norm(b,'fro');
 opts.nc_init  = norm(c,'fro');
 
+
+%--------------------------------------------
+% Reorder the PSD cones
+%--------------------------------------------
+% reorder the variables, such that A = [A1 A2], A2*A2' is diagonal
+reorder = 1;
+if reorder == 1
+    [At,c,K,opts] = ConsReorder(At,c,K,opts);
+end
+
+%--------------------------------------------
+% Rescale data
+%--------------------------------------------
 % Rescale
 [At,b,c,K,opts] = rescaleData(At,b,c,K,opts); % doesn't work well!
 
-% % svec form
-% [At,c,~,~] = svecData(At,c,K);
-% [opts.n,opts.m] = size(At);
 
 % Check if At,b,C are indeed sparse - if not, make full for speed!
 [n,m] = size(At);
