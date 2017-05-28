@@ -37,14 +37,14 @@ else
     K.l = 0;
 end
 
-if (isfield(K,'q') && max(K.q) > 0)
+if (isfield(K,'q') && ~isempty(K.q) && max(K.q) > 0)
     K.q = K.q(K.q~=0);
     nConeVars = nConeVars + sum(K.q);
 else
     K.q = 0;
 end
 
-if (isfield(K,'s') && max(K.s) > 0)
+if (isfield(K,'s') && ~isempty(K.s) && max(K.s) > 0)
     K.s = K.s(K.s~=0);
     nConeVars = nConeVars + sum(K.s.^2);
 else
