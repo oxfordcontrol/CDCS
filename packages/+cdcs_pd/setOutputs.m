@@ -78,6 +78,11 @@ if info.problem==0 && opts.completion==1 && opts.chordalize~=0
             'returned without completion.']);
         info.problem = 4;
     end
+elseif info.problem==3
+    warning('CDCS:psdCompletion',...
+        ['CDCS reached the maximum number of iterations, and will not attempt\n',...
+        'to complete the positive semidefinite variable. Your output will most\n',...
+        'likely contain NaNs!']);
 end
 
 % Scale solution
