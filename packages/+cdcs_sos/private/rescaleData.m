@@ -15,20 +15,24 @@ maxScaleColAt = max_scale .*sqrt(n);
 
 if opts.rescale
     
-    % Similar scaling strategy to SCS
+    % Similar scaling strategy to SCS, but scale columns of A (rows of At) to
+    % have unit norm. So, flip order of operations compared to SCS!
+    
+    
     
     % Scale rows of At 
     % must take mean over cone to preserve cone membership
+    % But not true for free and linear blocks: can scale individual variables!
     D = full(sqrt(sum(At.*At,2)));            % norm of cols of A (col vec)
     count = 0;
     if K.f>0
         nvars = K.f;
-        D(count+1:count+nvars) = mean(D(count+1:count+nvars));
+%         D(count+1:count+nvars) = mean(D(count+1:count+nvars));
         count = count + nvars;
     end
     if K.l>0
         nvars = K.l;
-        D(count+1:count+nvars) = mean(D(count+1:count+nvars));
+%         D(count+1:count+nvars) = mean(D(count+1:count+nvars));
         count = count + nvars;
     end
     if sum(K.q)>0
@@ -48,15 +52,24 @@ if opts.rescale
     end
     
     D(D>maxScaleRowAt) = maxScaleRowAt;     % set upper bound
-    D(D<minScaleRowAt) = 1;                 % set lower bound
-    At = bsxfun(@rdivide,At,D);             % divide row i of At by D(i)
+    D(D<minScaleRowAt) = minScaleRowAt;     % set lower bound
+
+    % <---------
+    % Old code: with bsxfun
+    %     At = bsxfun(@rdivide,At,D);             % divide row i of At by D(i)
+    % --------->
+    At = spdiags(1./D,0,count,count)*At;
     
     % Scale cols of At
     E = full(sqrt(sum(At.*At,1)));            % norm of rows of A (row vec)
     E(E>maxScaleColAt) = maxScaleColAt;       % set upper bound
-    E(E<minScaleColAt) = 1;                   % set lower bound
-    At = bsxfun(@rdivide,At,E);               % divide col i of At by E(i)
-    
+    E(E<minScaleColAt) = minScaleColAt;       % set lower bound
+    % <---------
+    % Old code: with bsxfun
+    %     At = bsxfun(@rdivide,At,E);               % divide col i of At by E(i)
+    % --------->
+    nE = length(E);
+    At = At*spdiags(1./E.',0,nE,nE);
     
     % Find mean row and col norms for scaled A = At.'
     M = At.*At;
