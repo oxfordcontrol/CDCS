@@ -5,7 +5,8 @@ function [At,c,K,opts] = ConsReorder(At,c,K,opts)
 
 %% find the diagonal part
     nCone     = length(K.s);
-    nConeVars = cumsum([0+K.f+K.q, K.s.*(K.s+1)/2]);
+    % GF on 24 July 2017: how about linear variables?
+    nConeVars = cumsum([K.f+K.l+K.q, K.s.*(K.s+1)/2]);
     OrthFlag  = zeros(nCone,1);
     OrthNum   = 0;
     for i = 1:nCone  %% focusing on PSD cones
