@@ -1,38 +1,44 @@
- function [eta,solInner] = factorMatrix(At,b,c,K,flag)
+function [eta,solInner] = factorMatrix(At,b,c,K,flag)
 % generate projector onto affine constraints
-% Here, we do not consider the modification of H in the scaling process
-
 % check orthogonality A = [A1 A2], A2 correponds to PSD cone variabels
 
+if strcmpi(flag,'blk')
+    [A1,~,D] = diviConstraint(At,K);
+    Ddiag = diag(D);   %% store the diagonal elements
+    P = 1./(1+Ddiag);
 
-[A1,D] = diviConstraint(At,K);
-
-Ddiag = diag(D);   %% store the diagonal elements
-P = 1./(1+Ddiag);
-
-% First factor the matrix (I+A1'PA1) where P = inv(I+D) is a diagonal
-% matrix; if A1 is empty (all the constraints are orthogonal), then return
-% P
-factors = factorKKT(P,A1,flag);
+    % First factor the matrix (I+A1'PA1) where P = inv(I+D) is a diagonal
+    % matrix; if A1 is empty (all the constraints are orthogonal), then return P
+    factors = factorKKT(P,A1,[],[],flag);
+elseif strcmpi(flag,'ldl') % strategy similar to the direct method in SCS
+    factors = factorKKT([],[],[],At,flag);
+    
+elseif strcmpi(flag,'blk-ldl')
+    [A1,A2,D] = diviConstraint(At,K);
+    
+    % First factor the matrix (I+A1'PA1) where P = inv(I+D) is a diagonal
+    % matrix; if A1 is empty (all the constraints are orthogonal), then return P
+    factors = factorKKT(D,A1,A2,[],flag);
+end
 
 % Compute a useful vector
-z.x  = c; 
-z.y  = -b;
-A = At';
-eta = solveInner(factors,At,A,z);
+z.x   = c; 
+z.y   = -b;
+A     = At';
+eta   = solveInner(factors,At,A,z);
 const = 1+c'*eta.x - b'*eta.y;
-eta.x  = eta.x/const; 
-eta.y  = eta.y/const; 
+eta.x = eta.x/const; 
+eta.y = eta.y/const; 
 
 % Set function handle
 solInner = @(v)solveInner(factors,At,A,v);
 
- end
+end
 
 %----------------------
 % divide the constraints
 %----------------------
-function [A1,D] = diviConstraint(At,K)
+function [A1,A2,D] = diviConstraint(At,K)
     % divide the equality constraints
     % Ax = b --> [A1 A2] x = b
     % such that D = A2*A2' is diagonal
@@ -74,28 +80,29 @@ function u = solveInner(factors,At,A,v)
     % Output is formatted the same way
     
     persistent useBuiltin
+    if(isempty(useBuiltin))
+        %default to look for CSparse code
+         useBuiltin = ~exist(['+cdcs_utils',filesep,'cs_ltsolve.' mexext],'file');
+         useBuiltin = useBuiltin | ~exist(['+cdcs_utils',filesep,'cs_lsolve.' mexext],'file');
+    end
+    
     % Import functions
     import cdcs_utils.cs_lsolve
     import cdcs_utils.cs_ltsolve
-
-    if(isempty(useBuiltin))
-        %default to look for CSparse code
-         useBuiltin = ~exist(['cs_ltsolve.' mexext],'file');  
-    end
     
-    if factors.diagFlag == true   %% AA' is diagonal
+    if isfield(factors,'diagFlag') && factors.diagFlag == true   %% AA' is diagonal
         P    = factors.P;
         u.y  = P.*(v.y - A*v.x);
         u.x  = v.x + At*u.y;
     
     elseif strcmpi(factors.flag,'blk')
         %Cholesky factors and original blocks
-        R  = factors.R;
+        R   = factors.R;
         A1  = factors.A1;
         A1t = factors.A1t;
-        P  = factors.P;
-        s  = factors.s;
-        si = factors.si;
+        P   = factors.P;
+        s   = factors.s;
+        si  = factors.si;
         
         % First find v0 to solve system like M*u2 = v0
         v2 = -(A*v.x) + v.y;
@@ -114,6 +121,73 @@ function u = solveInner(factors,At,A,v)
         % finish solve
         u.y  = z - P.*(A1*p);
         u.x  = v.x + At*u.y;
+
+        
+    elseif strcmpi(factors.flag,'ldl')
+        
+        %LDL factors and permutation 
+        L  = factors.L;
+        D  = factors.D;
+        s  = factors.s;
+        si = factors.si;
+
+        %assemble the right hand side
+        b = [v.x;v.y];
+
+        %reorder using ldl permutation
+        bs = b(s,1);
+
+       if(useBuiltin)
+            %Native matlab version (slow)
+            q = L'\(D\(L\bs));
+       else
+            %Csparse version (avoids transpose)
+            q = cs_ltsolve(L,D\cs_lsolve(L,full(bs)));
+       end
+
+        %permute back
+        x = q(si,1);
+
+        %repartition into (x,y)
+        nz = length(v.x);
+        u.x  = x(1:nz,1);
+        u.y  = -x((nz+1):end,1);
+        
+   elseif strcmpi(factors.flag,'blk-ldl')
+        
+        %LDL factors and permutation 
+        m   = factors.m;
+        A2  = factors.A2;
+        A2t = factors.A2t;
+        L   = factors.L;
+        D   = factors.D;
+        s   = factors.s;
+        si  = factors.si;
+
+        %assemble the right hand side 
+        b  = [v.x(1:m,1);v.y-A2*v.x(m+1:end,1)];
+
+        %reorder using ldl permutation
+        bs = b(s,1);
+
+       if(useBuiltin)
+            %Native matlab version (slow)
+            q = L'\(D\(L\bs));
+       else
+            %Csparse version (avoids transpose)
+            q = cs_ltsolve(L,D\cs_lsolve(L,full(bs)));
+       end
+
+        %permute back
+        x = q(si,1);
+
+        %repartition into (x,y)
+        u.x = zeros(length(v.x),1);
+        u.x(1:m)  = x(1:m,1);
+        
+        u.y  = -x((m+1):end,1);
+        u.x(m+1:end)  = A2t*u.y+v.x(m+1:end,1);
+        
     else
         error('Unknown method')
     end
@@ -125,7 +199,7 @@ end
 %----------------------
 % factorKKT
 %----------------------
-function factors = factorKKT(P,A1,flag)
+function factors = factorKKT(P,A1,A2,At,flag)
 
     if(nargin < 2)
         A1 = [];
@@ -136,19 +210,13 @@ function factors = factorKKT(P,A1,flag)
         flag = 'blk';
     end
     
-    if isempty(A1)  %% no free variable,        
-        factors.diagFlag = true;  %% all of the constraints are orthogonal
-        factors.P        = P;     %% diagnal inverse     
-    else            %% NOT all of the constraints are orthogonal, only part of them are!
-        factors.diagFlag = false;
-        if strcmpi(flag,'ldl')
-            % TO DO
-            error('Unknown method')
-
-        elseif strcmpi(flag,'inv')
-            % TO DO
-            error('Unknown method')
-        else
+    if strcmpi(flag,'blk')   
+        if isempty(A1)  %% no free variable,        
+            factors.diagFlag = true;  %% all of the constraints are orthogonal
+            factors.P        = P;     %% diagnal inverse  
+        else  %% NOT all of the constraints are orthogonal, only part of them are!
+            factors.diagFlag = false;
+            
             [n,m] = size(A1);
             B = spdiags(sqrt(P),0,n,n)*A1;      % slow with sparse type with few nonzeros?
             M = speye(m) + sparse(B'*B);        % = I + A1'*P*A
@@ -165,19 +233,46 @@ function factors = factorKKT(P,A1,flag)
                 factors.s     = s;
                 tmp           = 1:length(s);
                 factors.si(s) = tmp; %inverse permutation
-            else
-                % not definite - use LDL
-                M = [spdiags(1./P,0,n,n), sparse(A1)
-                     sparse(m,n), sparse(m,m)];
-                [U,D,s] = ldl(M,'upper','vector');
-                factors.flag = 'ldl';
-                factors.L     = U';
-                factors.D     = D;
-                factors.s     = s;
-                tmp           = 1:length(s);
-                factors.si(s) = tmp; %inverse permutation
             end
         end
-    end
+        
+    elseif strcmpi(flag,'ldl')           
+         % use LDL
+         % Use only the lower part of the matrix for factorization
+        [n,m] = size(At);
+        M = [speye(n,n), sparse(At)
+             sparse(m,n), -speye(m,m)];
+        [U,D,s] = ldl(M,'upper','vector');
+        
+        %For maximum efficiency in projection, store both
+        %the permutation s and its inverse permutation
+        factors.flag = 'ldl';
+        factors.L     = U';
+        factors.D     = D;
+        factors.s     = s;
+        tmp           = 1:length(s);
+        factors.si(s) = tmp; %inverse permutation
 
+    elseif strcmpi(flag,'blk-ldl')           
+         % first block elimination and then use LDL decomposition
+         % Use only the lower part of the matrix for factorization
+        [n,m] = size(A1);
+        M = [speye(m,m), sparse(A1');
+             sparse(n,m), -speye(n,n)-P];
+        [U,D,s] = ldl(M,'upper','vector');
+        
+        %For maximum efficiency in projection, store both
+        %the permutation s and its inverse permutation
+        factors.m     = m;
+        factors.A2    = A2;
+        factors.A2t   = A2';
+        factors.flag = 'blk-ldl';
+        factors.L     = U';
+        factors.D     = D;
+        factors.s     = s;
+        tmp           = 1:length(s);
+        factors.si(s) = tmp; %inverse permutation
+    else
+        error('Unknown method')
+    end
 end
