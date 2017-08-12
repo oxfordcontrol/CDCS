@@ -74,6 +74,11 @@ tstart = tic;
 opts = cdcsOpts;
 import cdcs_utils.*
 
+%% temporary use
+AtOld = At;
+bOld = b;
+cOld = c;
+KOld = K;
 
 %============================================
 % Setup
@@ -156,6 +161,7 @@ end
 %============================================
 % Run ADMM
 %============================================
+subTime = zeros(opts.maxIter,3);  % linear proj., conic proj., dual update
 admmtime = tic;
 for iter = 1:opts.maxIter
     
@@ -163,9 +169,17 @@ for iter = 1:opts.maxIter
     YOld = Y;
     
     % Update block variables
+    linearProj = tic;
     [X,others] = updateX(X,Y,Z,opts.rho,others);
+    subTime(iter,1) = toc(linearProj);
+    
+    conicProj  = tic;
     [Y,others] = updateY(X,Y,Z,opts.rho,others);
+    subTime(iter,2) = toc(conicProj);
+    
+    dualUpdate  = tic;
     [Z,others] = updateZ(X,Y,Z,opts.rho,others);
+    subTime(iter,3) = toc(dualUpdate);
     
     % log errors / check for convergence
     [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
@@ -194,6 +208,14 @@ info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time
 info.time.total   = toc(tstart);           % total CPU time
 
+info.time.subiter = sum(subTime);          % time for each subiteration
+
+%% temporary use
+info.SeDuMiData.At = AtOld;
+info.SeDuMiData.b = bOld;
+info.SeDuMiData.c = cOld;
+info.SeDuMiData.K = KOld;
+
 % Print summary
 if opts.verbose
     fprintf(myline1)
@@ -206,6 +228,8 @@ if opts.verbose
     fprintf(' Dual residual        : %11.4e\n',info.dres)
     fprintf(' Setup time   (s)     : %11.4e\n',proctime)
     fprintf(' ADMM  time   (s)     : %11.4e\n',admmtime)
+    fprintf(' Avg. conic proj (s)  : %11.4e\n',info.time.subiter(2)./iter)
+    fprintf(' Avg. affine proj (s) : %11.4e\n',info.time.subiter(1)./iter)
     fprintf(' Cleanup time (s)     : %11.4e\n',posttime)
     fprintf(' Total time   (s)     : %11.4e\n',info.time.total)
     fprintf(myline1)
