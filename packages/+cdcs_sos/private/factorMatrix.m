@@ -207,7 +207,7 @@ function u = solveInner(factors,At,A,v)
             %Native matlab version (slow)
             q = R'\(R\bs);
        else
-            q = cs_ltsolve(R,cs_lsolve(R,ds));  %Csparse version (avoids transpose)
+            q = cs_ltsolve(R,cs_lsolve(R,full(bs)));  %Csparse version (avoids transpose)
        end
 
         %permute back
