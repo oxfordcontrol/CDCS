@@ -15,10 +15,10 @@ elseif strcmpi(flag,'ldl') % strategy similar to the direct method in SCS
     
 elseif strcmpi(flag,'blk-ldl')
     [A1,A2,D] = diviConstraint(At,K);
-    
-    % First factor the matrix (I+A1'PA1) where P = inv(I+D) is a diagonal
-    % matrix; if A1 is empty (all the constraints are orthogonal), then return P
     factors = factorKKT(D,A1,A2,[],flag);
+
+elseif strcmpi(flag,'blk-chol')
+    factors = factorKKT([],[],[],At,flag);
 end
 
 % Compute a useful vector
@@ -188,6 +188,34 @@ function u = solveInner(factors,At,A,v)
         u.y  = -x((m+1):end,1);
         u.x(m+1:end)  = A2t*u.y+v.x(m+1:end,1);
         
+    elseif strcmpi(factors.flag,'blk-chol')
+        
+        % Cholesky factors and permutation 
+        A  = factors.A;
+        At = factors.At;
+        R   = factors.R;
+        s   = factors.s;
+        si  = factors.si;
+
+        %assemble the right hand side 
+        b  = -(A*v.x) + v.y;
+
+        %reorder using ldl permutation
+        bs = b(s,1);
+
+       if(useBuiltin)
+            %Native matlab version (slow)
+            q = R'\(R\bs);
+       else
+            q = cs_ltsolve(R,cs_lsolve(R,ds));  %Csparse version (avoids transpose)
+       end
+
+        %permute back
+        x = q(si,1);
+
+        %repartition into (x,y)
+        u.y = x;
+        u.x = v.x + At*u.y;
     else
         error('Unknown method')
     end
@@ -272,6 +300,27 @@ function factors = factorKKT(P,A1,A2,At,flag)
         factors.s     = s;
         tmp           = 1:length(s);
         factors.si(s) = tmp; %inverse permutation
+        
+    elseif strcmpi(flag,'blk-chol')           
+         % first block elimination and then use cholesky decomposition
+         % Use only the lower part of the matrix for factorization
+        factors.diagFlag = false;
+            [~,m] = size(At);
+            M = speye(m) + sparse(At'*At);        % = I + A*P*A'
+            [R,p,s] = chol(M,'lower','vector');
+
+            if p==0
+                %For maximum efficiency in projection, store both
+                %the permutation s and its inverse permutation
+                factors.flag  = 'blk-chol';
+                factors.R     = R;
+                factors.A     = At';
+                factors.At    = At;
+                factors.P     = P;
+                factors.s     = s;
+                tmp           = 1:length(s);
+                factors.si(s) = tmp; %inverse permutation
+            end    
     else
         error('Unknown method')
     end
