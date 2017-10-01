@@ -44,8 +44,7 @@ opts.nc_init  = norm(c,'fro');
 %--------------------------------------------
 % Rescale data
 %--------------------------------------------
-%[At,b,c,K,opts] = rescaleData(At,b,c,K,Jch,opts);
-[At,b,c,K,opts] = rescaleDataTest(At,b,c,K,Jch,opts);
+[At,b,c,K,opts] = rescaleData(At,b,c,K,Jch,opts);
 
 
 %--------------------------------------------
