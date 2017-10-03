@@ -13,8 +13,10 @@ switch lower(opts.solver)
     case {'hsde'}
         [At,b,c,K,Ech,chstuff,opts] = cdcs_hsde.preprocess(At,b,c,K,opts);
         
+    case {'sos'}
+        [At,b,c,K,Ech,chstuff,opts] = cdcs_sos.preprocess(At,b,c,K,opts);
+        
     otherwise
-        error('Unknown value for ''options.solver''.')
-            
+        error('Unknown value for ''options.solver''.')           
 end
 

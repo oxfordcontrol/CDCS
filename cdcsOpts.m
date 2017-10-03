@@ -6,7 +6,7 @@ function options = cdcsOpts
 %
 % Generic solver options
 % ----------------------
-% options.solver     = 'hsde';    % which solver (primal/dual/hsde)
+% options.solver     = 'hsde';    % which solver (primal/dual/hsde/sos)
 % options.relTol     = 1e-4;      % tolerance
 % options.rescale    = true;      % scale data to improve convergence
 % options.verbose    = 1;         % print or silent
@@ -62,5 +62,5 @@ options.rhoIt      = 10;        % if pres/dres>mu (<mu) mu for rhoIt iterations,
 options.KKTfact    = 'blk';     % Options for KKT systems
 
 % the following is for self-dual embedding
-options.alpha      = 1.5;       % over relaxation, must lie in (0,2); 1.5 is recommanded
+options.alpha      = 1.8;       % over relaxation, must lie in (0,2); 1.8 is used in SCS
 

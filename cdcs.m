@@ -23,6 +23,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %   options.solver = 'hsde' (default): solve the problem in homogeneous self-dual embedding form
 %   options.solver = 'primal'        : solve the problem in primal standard form
 %   options.solver = 'dual'          : solve the problem in dual standard form
+%   options.solver = 'sos'           : solve the problem arising from Sum-of-squares programs
 %
 % The chordal decomposition can be carried out in two ways, specified by the
 % "chordalize" option:
@@ -83,8 +84,8 @@ if(nargin >= 5)
 end
 
 % Checks on specified solver type and method
-if ~any(strcmpi(opts.solver,{'primal','dual','hsde'}))
-    error('Unknown opts.solver. Please use "primal", "dual" or "hsde".')
+if ~any(strcmpi(opts.solver,{'primal','dual','hsde','sos'}))
+    error('Unknown opts.solver. Please use "primal", "dual", "hsde" or "sos".')
 end
 
 % Print nice welcoming header
@@ -93,7 +94,6 @@ if opts.verbose
     fprintf(myline1)
     fprintf('CDCS by G. Fantuzzi, Y. Zheng -- v1.0\n')
     fprintf(myline1)
-    %fprintf('Using method %i for the %s standard form.\n',opts.method,opts.solver)
     fprintf('Initializing CDCS...')
 end
 
@@ -105,7 +105,7 @@ proctime = tic;
 [At,b,c,K,opts] = splitBlocks(At,b,c,K,opts);
 [opts.n,opts.m] = size(At);
 
-% rescale & chordal decomposition
+% rescale & chordal decomposition for primal/dual/hsde
 Kold = K;
 [At,b,c,K,Ech,chstuff,opts] = preprocess(At,b,c,K,opts);
 
@@ -133,18 +133,22 @@ if opts.verbose
     end
     fprintf('done in %.4f seconds.      \n',proctime);
     fprintf('Algorithm              : %s\n',method);
-    fprintf('Chordalization method  : %i\n',opts.chordalize);
+    %fprintf('Chordalization method  : %i\n',opts.chordalize);
+    if any(strcmpi(opts.solver,{'primal','dual'}))
     fprintf('Adaptive penalty       : %i\n',opts.adaptive);
+    end
     fprintf('Scale data             : %i\n',opts.rescale);
     fprintf('Free variables         : %i                \n',K.f);
     fprintf('Non-negative variables : %i                \n',K.l);
     fprintf('Second-order cones     : %i (max. size: %i)\n',length(find(K.q ~=0)),max(K.q));
     fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(find(K.s ~=0)),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
-    fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));
+    if any(strcmpi(opts.solver,{'primal','dual','hsde'}))
+    fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));  
+    end
     fprintf(myline1);
     fprintf(header);
-    fprintf(myline2);
+    fprintf(myline2);    
 end
 
 %============================================
@@ -182,7 +186,7 @@ info.iter    = iter;                       % # of iterations
 info.cost    = log(iter).cost;             % terminal cost
 info.pres    = log(iter).pres;             % terminal primal ADMM res
 info.dres    = log(iter).dres;             % terminal dual ADMM res
-info.log     = log;                        % log of residuals etc
+info.log     = log(1:iter);                % log of residuals etc
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time

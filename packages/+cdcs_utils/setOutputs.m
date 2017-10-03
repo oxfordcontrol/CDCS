@@ -11,8 +11,10 @@ switch lower(opts.solver)
         [x,y,z,info,opts] = cdcs_pd.setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,info,opts);
         
     case {'hsde'}
-        %error('Homogeneous self-dual embedding solver coming soon!')
         [x,y,z,info,opts] = cdcs_hsde.setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,info,opts);
+        
+    case {'sos'}
+        [x,y,z,info,opts] = cdcs_sos.setOutputs(X,Y,Z,Kold,info,opts);
         
     otherwise
         error('Unknown value for ''options.solver''.')

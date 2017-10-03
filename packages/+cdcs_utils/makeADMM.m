@@ -15,6 +15,10 @@ switch lower(opts.solver)
         [updateX,updateY,updateZ,checkConvergence] = ...
             cdcs_hsde.makeADMM(At,b,c,K,Ech,opts);
         
+    case {'sos'}
+        [updateX,updateY,updateZ,checkConvergence] = ...
+            cdcs_sos.makeADMM(At,b,c,K,opts);
+        
     otherwise
         error('Unknown value for ''options.solver''.')
             

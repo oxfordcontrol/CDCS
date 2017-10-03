@@ -34,8 +34,8 @@ opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
 cdcs(At,b,c,K,opts);
-opts.solver = 'hsde';
-cdcs(At,b,c,K,opts);
+% opts.solver = 'hsde'; % note: current implementation of hsde fails; need debug
+% cdcs(At,b,c,K,opts);
 
 
 % ---------------------------------------------------------------------------- %

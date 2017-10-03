@@ -1,9 +1,10 @@
 # CDCS
 
-CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM) 
-described in our papers [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v2.pdf) and [_Fast ADMM for homogeneous self-dual embeddings of sparse SDPs_](https://arxiv.org/pdf/1611.01828.pdf) (included in the `doc/` folder)
+CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM)
+described in our paper [_Chordal decomposition in operator-splitting methods for
+sparse semidefinite programs_](https://arxiv.org/pdf/1707.05058.pdf). Previous conference papers are [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v2.pdf) and [_Fast ADMM for homogeneous self-dual embeddings of sparse SDPs_](https://arxiv.org/pdf/1611.01828.pdf) (included in the `doc/` folder)
 
-**Current version:** 1.1
+**Current version:** 1.1.0
 
 **Release notes:** 
 
@@ -28,10 +29,7 @@ CDCS solves in the standard primal and dual vectorized forms
 	(1)	subject to	Ax = b,				(2)	subject to	A'y + z = c,	
 				x \in K							z \in K*
 
-where the conic constraint `x \in K` are partially decomposable. This means that
-`x \in K` can be replaced by `p` smaller conic constraints `x_1 \in K_1`, ..., 
-`x_p \in K_p`, where `x_1`, ..., `x_p` are (possibly not-disjoint) subsets of the
-original optimization variable `x`.
+where the conic constraint `x \in K` are partially decomposable. This means that `x \in K` can be replaced by `p` smaller conic constraints `x_1 \in K_1`, ...,  `x_p \in K_p`, where `x_1`, ..., `x_p` are (possibly not-disjoint) subsets of the original optimization variable `x`.
 
 CDCS supports cartesian products of the following cones:
 
@@ -40,14 +38,9 @@ CDCS supports cartesian products of the following cones:
 * Second-order cone
 * Positive semidefinite cone
 
-Currently, CDCS only decomposes semidefinite cones characterized by a chordal 
-sparsity pattern. The other supported cone types are not decomposed. 
-This means that CDCS is most suitable for large sparse semidefinite programs (SDPs),
-although it can be used for any conic program over the supported cones.
+Currently, CDCS only decomposes semidefinite cones characterized by a chordal sparsity pattern. The other supported cone types are not decomposed.  This means that CDCS is most suitable for large sparse semidefinite programs (SDPs), although it can be used for any conic program over the supported cones.
 
-CDCS offers a choice to solve the primal problem (1) only, the dual problem (2) only,
-or the homogeneous self-dual embedding of the two problems. _From version 1.1, the 
-homogeneous self-dual embedding is the default method._
+CDCS offers a choice to solve the primal problem (1) only, the dual problem (2) only, or the homogeneous self-dual embedding of the two problems. _From version 1.1.0, the homogeneous self-dual embedding is the default method._
 
 
 ## Quick start<a name="QuickStart"></a>
@@ -82,20 +75,12 @@ you have any suggestions for improvement, or find any bugs, feel free to [contac
 If you find CDCS useful, please cite at least one of the following papers as appropriate:
 
 ```
-@article{{ZFPGWhsde2016,
+@article{{ZFPGWchordal2017,
     archivePrefix= {arXiv},
-    eprint       = {1611.01828},
+    eprint       = {1707.05058},
     primaryClass = "math-OC",
     author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
-    title        = {{Fast ADMM for homogeneous self-dual embeddings of sparse SDPs}}
-    }
-
-@article{ZFPGWpd2016,
-    archivePrefix= {arXiv},
-    eprint       = {1609.06068v2},
-    primaryClass = "math-OC",
-    author       = {Zheng, Yang and Fantuzzi, Giovanni and Papachristodoulou, Antonis and Goulart, Paul and Wynn, Andrew},
-    title        = {{Fast ADMM for Semidefinite Programs with Chordal Sparsity}}
+    title        = {{Chordal decomposition in operator-splitting methods for sparse semidefinite programs}}
     }
 	
 @misc{CDCS,

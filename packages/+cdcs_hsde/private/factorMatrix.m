@@ -1,11 +1,13 @@
-function [xi,solInner] = factorMatrix(At,b,c,E,flag)
+function [xi,solInner] = factorMatrix(At,b,c,E,D1,E2,flag)
 % generate projector onto affine constraints
-% Here, we do not consider the modification of H in the scaling process
+% The modification of H in the scaling process should be considered.
 
-D = accumarray(E,1);
-P = 1./(1+D./2);
+%tmpE2 = (1 - E2.^2./(1 + E2.^2)).*(E2.^2);
+tmpE2 = E2.^2./(1 + E2.^2);
+D = D1.*accumarray(E,tmpE2).*D1;
+P = 1./(1+D);
 
-% First factor the matrix (I+APA') where P = inv(I+1/2D) diagonal
+% First factor the matrix (I+APA') where P = inv(I+1/D) diagonal
 factors = factorKKT(P,At,flag);
 
 % Compute a useful vector
@@ -13,22 +15,22 @@ z.x  = c;
 z.xh = sparse(length(E),1);
 z.y  = -b;
 z.v  = sparse(length(E),1);
-xi   = solveInner(factors,E,z);
-const = 1+c'*xi.x - b'*xi.y;
+xi   = solveInner(factors,E,D1,E2,z);
+const = 1+c.'*xi.x - b.'*xi.y;
 xi.x  = xi.x/const; 
 xi.xh = xi.xh/const; 
 xi.y  = xi.y/const; 
 xi.v  = xi.v/const;
 
 % Set function handle
-solInner = @(v)solveInner(factors,E,v);
+solInner = @(v)solveInner(factors,E,D1,E2,v);
 
 end
 
 %----------------------
 % solveInner
 %----------------------
-function u = solveInner(factors,E,v)
+function u = solveInner(factors,E,D1,E2,v)
     % Solve system of form
     %
     % [  I  M1] [u1] = [v1]
@@ -64,11 +66,15 @@ function u = solveInner(factors,E,v)
         si = factors.si;
         
         % First find v0 to solve system like M*u2 = v0
-        v01 = accumarray(E,v.v) + (At*v.y) + v.x;
-        v02 = v.xh - v.v;
+        v01 = v.x + (At*v.y + D1.*accumarray(E,E2.*v.v));  %% first block elimination
+        v02 = v.xh - E2.*v.v;
         
-        % Solve system M*u2=v0 using factors
-        z = P.*(v01 + accumarray(E,v02)./2);
+        % Solve system M*u2=v0 using factors    
+        
+        E2square = E2.^2;
+        
+        tmpE2 = E2square./(1 + E2square);                 %% second block elimination
+        z = P.*(v01 + D1.*accumarray(E,tmpE2.*v02));
         d = A*z;
         ds= full(d(s,1));                       % permute
         if(useBuiltin) 
@@ -80,14 +86,17 @@ function u = solveInner(factors,E,v)
         
         % finish solve
         u.x  = z - P.*(At*p);
-        u.xh = (v02 + u.x(E))./2;
+        
+        tmp1 = 1+E2square;
+        tmp2 = D1.*u.x;  
+        tmp3 = tmp2(E);
+        
+        u.xh = (v02 + E2square.*tmp3)./tmp1;        
         u.y  = v.y - A*u.x;
-        u.v  = v.v + u.xh - u.x(E);
+        u.v  = v.v + (u.xh - tmp3).*E2;
     else
         error('Unknown method')
-    end
-    
-    
+    end   
 end
 
 
