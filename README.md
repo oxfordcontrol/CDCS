@@ -2,7 +2,9 @@
 
 CDCS (Cone Decomposition Conic Solver) is an open-source MATLAB solver for sparse conic programs with partially decomposable conic constraints. CDCS implements the alternating direction method of multipliers (ADMM)
 described in our paper [_Chordal decomposition in operator-splitting methods for
-sparse semidefinite programs_](https://arxiv.org/pdf/1707.05058.pdf). Previous conference papers are [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v2.pdf) and [_Fast ADMM for homogeneous self-dual embeddings of sparse SDPs_](https://arxiv.org/pdf/1611.01828.pdf) (included in the `doc/` folder)
+sparse semidefinite programs_](https://arxiv.org/pdf/1707.05058.pdf). 
+
+* Previous conference papers are [_Fast ADMM for Semidefinite Programs with Chordal Sparsity_](https://arxiv.org/pdf/1609.06068v2.pdf) and [_Fast ADMM for homogeneous self-dual embeddings of sparse SDPs_](https://arxiv.org/pdf/1611.01828.pdf) (included in the `doc/` folder)
 
 **Current version:** 1.1.0
 
