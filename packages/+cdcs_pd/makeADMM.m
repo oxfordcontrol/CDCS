@@ -29,8 +29,8 @@ step2 = @(X,Y,Z,rho,others)updateY(X,Y,Z,rho,others,projCone);
 step3 = @(X,Y,Z,rho,others)updateZ(X,Y,Z,rho,others,K);
 
 % Convergence check
-checkConv = @(X,Y,Z,YOld,others,iter,admmtime,opts)...
-    checkConvergence(X,Y,Z,YOld,others,b,c,Ech,iter,opts,admmtime);
+checkConv = @(X,Y,Z,YOld,others,iter,admmtime,opts,log)...
+    checkConvergence(X,Y,Z,YOld,others,b,c,Ech,iter,opts,admmtime,log);
 
 
 

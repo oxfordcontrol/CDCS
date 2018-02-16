@@ -1,4 +1,4 @@
-function [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,opts,admmtime)
+function [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,opts,admmtime,log)
 
 % CHECKCONVERGENCE
 % Use the basic convergence test in the Boyd survey paper
@@ -90,8 +90,9 @@ if opts.adaptive
 end
 
 % Log errors
-log(iter).pres = pres;
-log(iter).dres = dres;
-log(iter).cost = cost;
+log.pres(iter) = pres;
+log.dres(iter) = dres;
+log.cost(iter) = cost;
+
 
 end

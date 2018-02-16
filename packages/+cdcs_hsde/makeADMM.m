@@ -14,8 +14,8 @@ step3 = @(X,Y,Z,rho,others)updateV(X,Y,Z,rho,others);                           
 
 % Convergence check % residuals according to Byod's paper
 A = At';
-checkConv = @(X,Y,Z,YOld,others,iter,admmtime,opts)...
-   checkConvergence(X,Y,Z,YOld,iter,admmtime,opts,At,A,b,c,btr,ctr,Ech,others);
+checkConv = @(X,Y,Z,YOld,others,iter,admmtime,opts,log)...
+   checkConvergence(X,Y,Z,YOld,iter,admmtime,opts,At,A,b,c,btr,ctr,Ech,others,log);
 
 end
 

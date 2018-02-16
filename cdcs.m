@@ -161,7 +161,11 @@ end
 %============================================
 % Run ADMM
 %============================================
-subTime = zeros(opts.maxIter,3);  % linear proj., conic proj., dual update
+subTime  = zeros(opts.maxIter,3);  % linear proj., conic proj., dual update
+log.cost = zeros(opts.maxIter,1);
+log.pres = zeros(opts.maxIter,1);
+log.dres = zeros(opts.maxIter,1);
+
 admmtime = tic;
 for iter = 1:opts.maxIter
     
@@ -182,7 +186,7 @@ for iter = 1:opts.maxIter
     subTime(iter,3) = toc(dualUpdate);
     
     % log errors / check for convergence
-    [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
+    [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts,log);
     if stop
         break;
     end
@@ -199,10 +203,15 @@ posttime = toc(posttime);
 
 % Info
 info.iter    = iter;                       % # of iterations
-info.cost    = log(iter).cost;             % terminal cost
-info.pres    = log(iter).pres;             % terminal primal ADMM res
-info.dres    = log(iter).dres;             % terminal dual ADMM res
-info.log     = log(1:iter);                % log of residuals etc
+info.cost    = log.cost(iter);             % terminal cost
+info.pres    = log.pres(iter);             % terminal primal ADMM res
+info.dres    = log.dres(iter);             % terminal dual ADMM res
+info.log.pres     = log.pres(1:iter);      % log of residuals etc
+info.log.dres     = log.dres(1:iter); 
+info.log.cost     = log.cost(1:iter);  
+if any(strcmpi(opts.solver,{'hsde'}))
+    info.log.gap     = log.gap(1:iter);
+end
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time
