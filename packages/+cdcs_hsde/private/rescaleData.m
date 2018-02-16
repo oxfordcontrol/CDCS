@@ -9,10 +9,15 @@ function [At,b,c,K,opts] = rescaleData(At,b,c,K,Ech,opts)
 [n,m] = size(At);
 min_scale = 1e-3;
 max_scale = 1e+3;
-minScaleRowAt = min_scale .*sqrt(m);
-maxScaleRowAt = max_scale .*sqrt(m);
-minScaleColAt = min_scale .*sqrt(n);
-maxScaleColAt = max_scale .*sqrt(n);
+% minScaleRowAt = min_scale .*sqrt(m);
+% maxScaleRowAt = max_scale .*sqrt(m);
+% minScaleColAt = min_scale .*sqrt(n);
+% maxScaleColAt = max_scale .*sqrt(n);
+
+minScaleRowAt = min_scale .*sqrt(m+length(Ech));
+maxScaleRowAt = max_scale .*sqrt(m+length(Ech));
+minScaleColAt = min_scale .*sqrt(n+length(Ech));
+maxScaleColAt = max_scale .*sqrt(n+length(Ech));
 
 if opts.rescale
     
@@ -98,7 +103,8 @@ if opts.rescale
     % --------------------------------------------------------
     % Save rescaling variables
     % --------------------------------------------------------
-    % D2 and E2 do not appear in the computation later?
+    % D2 and E2 do not appear in the computation later? 
+    % Try to incoporate the influence of D1, D2, E1, E2
     opts.scaleFactors.D1 = 1./D1(:);
     opts.scaleFactors.E1 = 1./E1(:);
     opts.scaleFactors.D2 = 1./D2(:);

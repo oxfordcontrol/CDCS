@@ -27,15 +27,17 @@ zsvec = zeros(chstuff.totvars,1);          % svec format
 [xmat,zmat] = makeConeVariables(K);        % blockified
 
 % Extract variables & scale solution back
-xsvec(chstuff.usedvars) = (Y.x./Y.tau.*opts.scaleFactors.D1)./opts.scaleFactors.sc_b;
 y(:) = (Y.y./Y.tau.*opts.scaleFactors.E1)./opts.scaleFactors.sc_c;
-zsvec(chstuff.usedvars) = accumarray(E,Z.xh./Y.tau);
-zsvec(chstuff.usedvars) = (zsvec(chstuff.usedvars).*opts.scaleFactors.D1)./opts.scaleFactors.sc_c;
-
+zsvec(chstuff.usedvars) = accumarray(E,Y.v./Y.tau);
+zsvec(chstuff.usedvars) = (zsvec(chstuff.usedvars)./opts.scaleFactors.D1)./opts.scaleFactors.sc_c;
 zmat = blockify(zmat,zsvec,K);
 ztemp = flatten(ztemp,zmat,0);
+
 % Positive semidefinite completion of x variable
 % Only complete if problem successfully solved!
+
+tmpScale = max(opts.scaleFactors.D1)./opts.scaleFactors.sc_b;    % keep the unscaled variables for completion
+xsvec(chstuff.usedvars) = (Y.x./Y.tau.*opts.scaleFactors.D1)./opts.scaleFactors.sc_b./tmpScale;
 xmat  = blockify(xmat,xsvec,K);
 xtemp = flatten(xtemp,xmat,0);                   % in sedumi format for psdCompletion
 if info.problem==0 && opts.completion==1 && opts.chordalize~=0
@@ -57,8 +59,11 @@ elseif info.problem==3
         'likely contain NaNs!']);
 end
 
+% scale back the solutions
+
+
 % Assign solution to used variables
-x(opts.usedvars) = xtemp;
+x(opts.usedvars) = xtemp.*tmpScale;
 z(opts.usedvars) = ztemp;
 
 
