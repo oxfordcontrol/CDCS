@@ -110,7 +110,7 @@ proctime = tic;
 [At,b,c,K,opts] = splitBlocks(At,b,c,K,opts);
 [opts.n,opts.m] = size(At);
 
-% rescale & chordal decomposition for primal/dual/hsde
+% rescaling & chordal decomposition for primal/dual/hsde
 Kold = K;
 [At,b,c,K,Ech,chstuff,opts] = preprocess(At,b,c,K,opts);
 

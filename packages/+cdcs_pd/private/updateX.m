@@ -18,7 +18,7 @@ if strcmpi(opts.solver,'primal')
     others.dual = y;
     
     %blockify E*x
-    Ex = X.vec(Ech);
+    Ex = x(Ech);%X.vec(Ech);
     X.blk = blockify(X.blk,Ex,K);
     
 elseif strcmpi(opts.solver,'dual')

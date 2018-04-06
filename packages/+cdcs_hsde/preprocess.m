@@ -46,6 +46,7 @@ opts.nc_init  = norm(c,'fro');
 %--------------------------------------------
 [At,b,c,K,opts] = rescaleData(At,b,c,K,Jch,opts);
 
+
 %--------------------------------------------
 % Set new At, c, K.s (remove unused variables)
 %--------------------------------------------

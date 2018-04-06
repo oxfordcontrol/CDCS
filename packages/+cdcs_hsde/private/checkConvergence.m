@@ -20,7 +20,7 @@ if u.tau > 0   %% feasible problem
 %       presi = norm(A*x - b,'fro')./(1+opts.nb);
 %       dresi = norm((At*y + accumarray(E,u.v./u.tau)- c),'fro')./(1+opts.nc);
 %       gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
-    
+
     % residual based on unscaled data
 %     pk  = (A*x - b).*opts.scaleFactors.E1;
 %     presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
@@ -58,32 +58,34 @@ if u.tau > 0   %% feasible problem
 %     end
     
 else % infeasible or unbounded problem?
-    pinfIndex = -btr*u.y;  % index of certificating primal infesibility
-    dinfIndex = ctr*u.x;   % index of certificating dual infesibility
-    if dinfIndex < 0       % dual infeasible
+    pinfIndex = btr*u.y;  % index of certificating primal infesibility
+    dinfIndex = -ctr*u.x;   % index of certificating dual infesibility
+    if dinfIndex > 0       % dual infeasible
 %         % scaled variables
-%         pfeas    = norm(A*u.x,'fro');
-%         pfeasTol = -dinfIndex/opts.nc*opts.relTol;
+         pfeas    = norm(A*u.x,'fro');
+         pfeasTol = dinfIndex/opts.nc*opts.relTol;
 
         % Original variables
-        pfeas    = norm( opts.scaleFactors.E1.*(A*u.x),'fro');
-        %pfeasTol = -dinfIndex/opts.nc_init/opts.scaleFactors.sc_c*opts.relTol;
-        pfeasTol = -dinfIndex/norm(opts.scaleFactors.D1.*c,'fro')*opts.relTol;
-        if pfeas <= pfeasTol  %% a point x that certificates dual infeasiblity
-           info.problem = 2;
-           stop = true;
-        end
+%         pfeas    = norm( opts.scaleFactors.E1.*(A*u.x),'fro');
+%         %pfeasTol = -dinfIndex/opts.nc_init/opts.scaleFactors.sc_c*opts.relTol;
+%         pfeasTol = -dinfIndex/norm(opts.scaleFactors.D1.*c,'fro')*opts.relTol;
+
+         if pfeas <= pfeasTol  %% a point x that certificates dual infeasiblity
+            info.problem = 2;
+            stop = true;
+         end
     end
-    if pinfIndex < 0   % primal infeasible
+    if pinfIndex > 0   % primal infeasible
         
         % scaled data
-%         dfeas    = norm(At*u.y+accumarray(E,u.v),'fro');
-%         dfeasTol = -pinfIndex/opts.nb*opts.relTol;
+        %dfeas1    = norm(At*u.y+ accumarray(E,u.v),'fro');
+         dfeas    = norm(At*u.y+opts.scaleFactors.D1.*accumarray(E,opts.scaleFactors.E2.*u.v),'fro');
+         dfeasTol = pinfIndex/opts.nb*opts.relTol;
 
         % unscaled data
-        dfeas    = norm(opts.scaleFactors.D1.*(At*u.y+accumarray(E,u.v)),'fro');
-        %dfeasTol = -pinfIndex/opts.nb_init/opts.scaleFactors.sc_b*opts.relTol;
-        dfeasTol = -pinfIndex/norm(opts.scaleFactors.E1.*b,'fro')*opts.relTol;
+         %dfeas    = norm(opts.scaleFactors.D1.*(At*u.y+opts.scaleFactors.D1.*accumarray(E,opts.scaleFactors.E2.*u.v)),'fro');
+         %dfeasTol = -pinfIndex/opts.nb_init/opts.scaleFactors.sc_b*opts.relTol;
+         %dfeasTol = pinfIndex/norm(opts.scaleFactors.E1.*b,'fro')*opts.relTol;
         if dfeas <= dfeasTol  %% a point y that certificates primal infeasiblity
            info.problem = 1;
            stop = true;
@@ -100,8 +102,8 @@ end
 
 %progress message
 if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || stop)
-    fprintf('%5d | %7.2e | %7.2e | %9.2e | %9.2e | %8.2e | %8.2e | %8.2e |\n',...
-            iter,presi,dresi,pcost,dcost,gap, opts.rho,toc(admmtime))
+    fprintf('%5d | %7.2e | %7.2e | %9.2e | %9.2e | %8.2e | %8.2e |\n',...
+            iter,presi,dresi,pcost,dcost,gap, toc(admmtime))
 end  
 
 % log information

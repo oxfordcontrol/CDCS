@@ -94,5 +94,15 @@ log.pres(iter) = pres;
 log.dres(iter) = dres;
 log.cost(iter) = cost;
 
+%=======
+% Use preallocation for speed
+%if iter==1
+%    cc = cell(opts.maxIter,1);
+%    log = struct('pres',cc,'dres',cc,'cost',cc);
+%end
+%log(iter).pres = pres;
+%log(iter).dres = dres;
+%log(iter).cost = cost;
+%>>>>>>> master
 
 end
