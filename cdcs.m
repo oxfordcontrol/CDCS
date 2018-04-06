@@ -74,6 +74,11 @@ tstart = tic;
 opts = cdcsOpts;
 import cdcs_utils.*
 
+%% temporary use
+AtOld = At;
+bOld = b;
+cOld = c;
+KOld = K;
 
 %============================================
 % Setup
@@ -145,6 +150,8 @@ if opts.verbose
     fprintf('Affine constraints     : %i                \n',opts.m);
     if any(strcmpi(opts.solver,{'primal','dual','hsde'}))
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));  
+    else
+    fprintf('Nonorthogonal dimension: %i                \n',opts.sos.NonOrth);
     end
     fprintf(myline1);
     fprintf(header);
@@ -154,6 +161,11 @@ end
 %============================================
 % Run ADMM
 %============================================
+subTime  = zeros(opts.maxIter,3);  % linear proj., conic proj., dual update
+log.cost = zeros(opts.maxIter,1);
+log.pres = zeros(opts.maxIter,1);
+log.dres = zeros(opts.maxIter,1);
+
 admmtime = tic;
 for iter = 1:opts.maxIter
     
@@ -161,12 +173,20 @@ for iter = 1:opts.maxIter
     YOld = Y;
     
     % Update block variables
+    linearProj = tic;
     [X,others] = updateX(X,Y,Z,opts.rho,others);
+    subTime(iter,1) = toc(linearProj);
+    
+    conicProj  = tic;
     [Y,others] = updateY(X,Y,Z,opts.rho,others);
+    subTime(iter,2) = toc(conicProj);
+    
+    dualUpdate  = tic;
     [Z,others] = updateZ(X,Y,Z,opts.rho,others);
+    subTime(iter,3) = toc(dualUpdate);
     
     % log errors / check for convergence
-    [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts);
+    [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts,log);
     if stop
         break;
     end
@@ -183,14 +203,27 @@ posttime = toc(posttime);
 
 % Info
 info.iter    = iter;                       % # of iterations
-info.cost    = log(iter).cost;             % terminal cost
-info.pres    = log(iter).pres;             % terminal primal ADMM res
-info.dres    = log(iter).dres;             % terminal dual ADMM res
-info.log     = log(1:iter);                % log of residuals etc
+info.cost    = log.cost(iter);             % terminal cost
+info.pres    = log.pres(iter);             % terminal primal ADMM res
+info.dres    = log.dres(iter);             % terminal dual ADMM res
+info.log.pres     = log.pres(1:iter);      % log of residuals etc
+info.log.dres     = log.dres(1:iter); 
+info.log.cost     = log.cost(1:iter);  
+if any(strcmpi(opts.solver,{'hsde'}))
+    info.log.gap     = log.gap(1:iter);
+end
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time
 info.time.total   = toc(tstart);           % total CPU time
+
+info.time.subiter = sum(subTime);          % time for each subiteration
+
+%% temporary use
+info.SeDuMiData.At = AtOld;
+info.SeDuMiData.b = bOld;
+info.SeDuMiData.c = cOld;
+info.SeDuMiData.K = KOld;
 
 % Print summary
 if opts.verbose
@@ -204,6 +237,8 @@ if opts.verbose
     fprintf(' Dual residual        : %11.4e\n',info.dres)
     fprintf(' Setup time   (s)     : %11.4e\n',proctime)
     fprintf(' ADMM  time   (s)     : %11.4e\n',admmtime)
+    fprintf(' Avg. conic proj (s)  : %11.4e\n',info.time.subiter(2)./iter)
+    fprintf(' Avg. affine proj (s) : %11.4e\n',info.time.subiter(1)./iter)
     fprintf(' Cleanup time (s)     : %11.4e\n',posttime)
     fprintf(' Total time   (s)     : %11.4e\n',info.time.total)
     fprintf(myline1)

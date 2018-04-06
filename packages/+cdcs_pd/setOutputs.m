@@ -23,15 +23,15 @@ if opts.chordalize == 0
 elseif opts.chordalize == 1
     % Decompose equally
     IA  = accumarray(E,1);
-    cd  = c./IA; cd  = cd(E);    
+    cd  = c./IA; cd  = cd(E);
 elseif opts.chordalize == 2
     % Decompose using only last entry
     nv  = length(E);
     cd  = zeros(nv,1);
     [U,IA] = unique(E,'last');
-    cd(IA,:) = c(U,:); 
+    cd(IA,:) = c(U,:);
 else
-    error('Unknown chordal decomposition method.')    
+    error('Unknown chordal decomposition method.')
 end
 
 % Create some useful variables. xsvec is initialized so it is obvious which

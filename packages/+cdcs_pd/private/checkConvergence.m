@@ -1,4 +1,4 @@
-function [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,opts,admmtime)
+function [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,b,c,E,iter,opts,admmtime,log)
 
 % CHECKCONVERGENCE
 % Use the basic convergence test in the Boyd survey paper
@@ -90,13 +90,19 @@ if opts.adaptive
 end
 
 % Log errors
+log.pres(iter) = pres;
+log.dres(iter) = dres;
+log.cost(iter) = cost;
+
+%=======
 % Use preallocation for speed
-if iter==1
-    cc = cell(opts.maxIter,1);
-    log = struct('pres',cc,'dres',cc,'cost',cc);
-end
-log(iter).pres = pres;
-log(iter).dres = dres;
-log(iter).cost = cost;
+%if iter==1
+%    cc = cell(opts.maxIter,1);
+%    log = struct('pres',cc,'dres',cc,'cost',cc);
+%end
+%log(iter).pres = pres;
+%log(iter).dres = dres;
+%log(iter).cost = cost;
+%>>>>>>> master
 
 end

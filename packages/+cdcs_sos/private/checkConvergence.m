@@ -1,4 +1,4 @@
-function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opts,At,b,c,others)
+function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opts,At,b,c,others,log)
 
 % CHECKCONVERGENCE primal/dual infeasible
 % Problem codes
@@ -120,8 +120,10 @@ end
 % Use preallocation for speed
 if iter==1
 	% Much faster preallocation method
-    cc = cell(opts.maxIter,1);
-    log = struct('pres',cc,'dres',cc,'cost',cc,'dcost',cc);
+    %cc = cell(opts.maxIter,1);
+    %log = struct('pres',cc,'dres',cc,'cost',cc,'dcost',cc);
+    log.dcost = zeros(opts.maxIter,1);
+    log.gap   = zeros(opts.maxIter,1);
     
     % Old
     %     [log(1:opts.maxIter,1).pres] = deal(0);
@@ -129,10 +131,11 @@ if iter==1
     %     [log(1:opts.maxIter,1).cost] = deal(0);
     %     [log(1:opts.maxIter,1).dcost] = deal(0);
 end
-log(iter).pres  = presi;
-log(iter).dres  = dresi;
-log(iter).cost  = pcost;   %% use primal cost
-log(iter).dcost = dcost;
+log.pres(iter)  = presi;
+log.dres(iter)  = dresi;
+log.cost(iter)  = pcost;   %% use primal cost
+log.dcost(iter) = dcost;
+log.gap(iter)   = gap;
 
 % end main
 end

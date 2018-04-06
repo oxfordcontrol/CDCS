@@ -26,6 +26,25 @@ xtmp = (xtmp./opts.scaleFactors.D)./opts.scaleFactors.sc_b;
 ytmp = (ytmp./opts.scaleFactors.E)./opts.scaleFactors.sc_c;
 ztmp = (ztmp.*opts.scaleFactors.D)./opts.scaleFactors.sc_c;
 
+
+
+% Reorder the variables x, z back to match the original data 
+% becasue we reordered the data into the prepcosseing step
+Kreorder.s = K.s(opts.sos.ReOrder);                        % This is the PSD cone after reordering
+nConeVars = cumsum([K.f+K.l+K.q, Kreorder.s.*(Kreorder.s+1)/2]);
+[~,ReOrder] = sort(opts.sos.ReOrder);               %% reorder the variables x
+Index = 1;
+ReOrderVariables = zeros(nConeVars(end)-nConeVars(1),1);
+for i = 1:length(K.s)
+    Num = nConeVars(ReOrder(i)+1) - nConeVars(ReOrder(i));
+    ReOrderVariables(Index:Index+Num-1)  = nConeVars(ReOrder(i))+1:nConeVars(ReOrder(i)+1);
+    Index = Index + Num;
+end
+ReOrderVariables = [(1:nConeVars(1))';ReOrderVariables];
+xtmp = xtmp(ReOrderVariables);
+ztmp = ztmp(ReOrderVariables);
+
+
 % block value
 [xmat,zmat] = makeConeVariables(K);        % blockified
 xmat  = blockify(xmat,xtmp,K);
