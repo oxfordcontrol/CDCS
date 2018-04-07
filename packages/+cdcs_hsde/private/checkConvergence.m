@@ -17,11 +17,12 @@ if u.tau > 0   %% feasible problem
     pcost = (ctr*x)/opts.scaleFactors.sc_cost;        %% primal cost
     
     % this is based on the scaled data
-%       presi = norm(A*x - b,'fro')./(1+opts.nb);
-%       dresi = norm((At*y + accumarray(E,u.v./u.tau)- c),'fro')./(1+opts.nc);
-%       gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
+    % presi = norm(A*x - b,'fro')./(1+opts.nb);
+    % dresi = norm((At*y + accumarray(E,u.v./u.tau)- c),'fro')./(1+opts.nc);
+    % dresi = norm((At*y + opts.scaleFactors.D1.*accumarray(E,opts.scaleFactors.E2.*u.v./u.tau)- c),'fro')./(1+opts.nc);
+    % gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
 
-    % residual based on unscaled data
+%     residual based on unscaled data
 %     pk  = (A*x - b).*opts.scaleFactors.E1;
 %     presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
 %     dk  = (At*y + accumarray(E,u.v./u.tau) - c).*opts.scaleFactors.D1;
@@ -30,7 +31,7 @@ if u.tau > 0   %% feasible problem
     
     pk  = (A*x - b)./opts.scaleFactors.E1;
     presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
-    dk  = (At*y + accumarray(E,u.v./u.tau) - c)./opts.scaleFactors.D1;
+    dk  = (At*y + opts.scaleFactors.D1.*accumarray(E,opts.scaleFactors.E2.*u.v./u.tau) - c);
     dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
     gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
  
@@ -39,23 +40,6 @@ if u.tau > 0   %% feasible problem
         stop = true;
     end
     
-    % adpative penalty?
-    % YZ: remove adaptive penalty, hsde is independent of \rho
-%     if opts.adaptive && ~stop
-%         
-%         % standard ADMM residual according to Boyd's paper
-%         utmp = vertcat(u.x,u.xh,u.y,u.v,u.tau); 
-%         vtmp = vertcat(v.x,v.xh,v.y,v.v,v.kappa);
-%         hatutmp = vertcat(hatu.x,hatu.xh,hatu.y,hatu.v,hatu.tau);
-%         uoldtmp = vertcat(uold.x,uold.xh,uold.y,uold.v,uold.tau);
-%         
-%         r = norm(utmp-hatutmp,'fro')./max(norm(utmp,'fro'),norm(hatutmp,'fro'));
-%         s = opts.rho*norm(utmp-uoldtmp,'fro')./max(norm(utmp,'fro'),norm(vtmp,'fro'));
-%         
-%         % Update ADMM penalty parameter
-%         opts = updatePenalty(opts,r,s);
-%         
-%     end
     
 else % infeasible or unbounded problem?
     pinfIndex = btr*u.y;  % index of certificating primal infesibility
@@ -122,43 +106,4 @@ log.gap(iter)   = gap;
 
 % end main
 end
-
-
-% ============================================================================ %
-% Nested functions
-% ============================================================================ %
-% % 
-% function opts = updatePenalty(opts,pres,dres)
-% % Update penaly
-% 
-%     persistent itPinf itDinf
-%     if isempty(itPinf) || isempty(itDinf)
-%         % initialize persistent iteration counters when entering for the first
-%         % time (persistent variables are empty and not zero when declared)
-%         itPinf = 0; % number of iterations for which pinf/dinf <= eta
-%         itDinf = 0; % number of iterations for which pinf/dinf > eta
-%     end
-% 
-%     if opts.adaptive
-%         resRat = pres/dres;
-%         if resRat >= opts.mu
-%             itPinf = itPinf+1;
-%             itDinf = 0;
-%             if itPinf >= opts.rhoIt
-%                 % ratio of pinf and dinf remained large for long => rescale rho
-%                 itPinf = 0;
-%                 opts.rho = min(opts.rho*opts.tau, opts.rhoMax);
-%             end
-%         elseif 1/resRat >= opts.mu
-%             itDinf = itDinf+1;
-%             itPinf = 0;
-%             if itDinf >= opts.rhoIt
-%                 % ratio of pinf and dinf remained small for long => rescale rho
-%                 itDinf = 0;
-%                 opts.rho = max(opts.rho/opts.tau, opts.rhoMin);
-%             end
-%         end
-%     end
-% 
-% end
 
