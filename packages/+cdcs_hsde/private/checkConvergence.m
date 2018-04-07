@@ -86,8 +86,14 @@ end
 
 %progress message
 if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || stop)
-    fprintf('%5d | %7.2e | %7.2e | %9.2e | %9.2e | %8.2e | %8.2e |\n',...
+    if ~isnan(presi)
+        fprintf('%5d | %7.2e | %7.2e | %9.2e | %9.2e | %8.2e | %8.2e |\n',...
             iter,presi,dresi,pcost,dcost,gap, toc(admmtime))
+    else
+        % for the purpose of alginment
+        fprintf('%5d | %8d | %8d | %9d | %9d | %8d | %8.2e |\n',...
+            iter,presi,dresi,pcost,dcost,gap, toc(admmtime))
+    end
 end  
 
 % log information

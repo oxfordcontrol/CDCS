@@ -32,26 +32,25 @@ maxScaleColAt = max_scale .*sqrt(n+length(Ech));
 
 if opts.rescale
     
-       
     % -----------------------------------------------------
     % Scale rows of [At H']
     %               [0  -I]  norms are similar to each other
     % -----------------------------------------------------
     
     % norm of rows of [At H']
-    D1 = full(sqrt( sum(At.*At,2) + accumarray(Ech,1)));
-    count = 0;
+    D1 = full(sqrt(sum(At.*At,2) + accumarray(Ech,1)));
     
+%    count = 0;
     % No need to take mean 
 %     if K.f>0
 %         count = count + K.f;
 %     end
-%     
+% 
 %     if K.l>0
 %         count = count + K.l;
 %     end
 %     
-    % mean over quaratic cones
+%     % mean over quaratic cones
 %     if sum(K.q)>0
 %         for i = 1:length(K.q)
 %             nvars = K.q(i);
@@ -68,13 +67,13 @@ if opts.rescale
 %             count = count + nvars;
 %         end
 %    end
-    
+     
     D1(D1>maxScaleRowAt) = maxScaleRowAt;     % set upper bound
     D1(D1<minScaleRowAt) = 1;                 % set lower bound
     At = bsxfun(@rdivide,At,D1);              % divide row i of At by D(i)
     
     % norms of rows of [0 -I] 
-    D2 = ones(length(Ech),1);   %% always maintain the membership of cones
+    D2 = ones(length(Ech),1);       %% always maintain the membership of cones
     
     % -----------------------------------------------------
     % Scale cols of [D1At D1H']  [c]
