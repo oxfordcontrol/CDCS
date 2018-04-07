@@ -1,14 +1,13 @@
 function [stop,info,log,opts] = checkConvergence(hatu,u,v,uold,iter,admmtime,opts,At,b,c,others,log)
-
 % CHECKCONVERGENCE primal/dual infeasible
-% Problem codes
 %
+% Problem codes
 % 0: converged
 % 1: primal infeasible
 % 2: dual infeasible
 % 3: max number of iterations reached
 
-stop = false;
+stop         = false;
 info.problem = 3;
 
 if u.tau > 0   %% feasible problem
@@ -16,21 +15,7 @@ if u.tau > 0   %% feasible problem
     y = u.y./u.tau;
     dcost = (b.'*y)/opts.scaleFactors.sc_cost;        %% dual cost
     pcost = (c.'*x)/opts.scaleFactors.sc_cost;        %% primal cost
-    
-%     % ======================================================================== %
-%     % Scaled residuals, unscaled cost
-%     presi = norm(At.'*x - b,'fro')./max([1,opts.nAt,opts.nb]);
-%     gap   = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
-%     
-%     % GF: I think the dual residual is wrong, will need a factor of \rho for the
-%     %     variable v.x because in the code v.x is the unscaled multiplier while
-%     %     in the algorithm by O'Donoghue et al it is scaled.
-%     % Uncomment the first line if v is the unscaled multipler, the second one if
-%     % v is the scaled multiplier.
-%     %     dresi = norm((At*y + (v.x./u.tau)./opts.rho- c),'fro')./max([1,opts.nAt,opts.nc]);
-%     dresi = norm((At*y + (v.x./u.tau) - c),'fro')./max([1,opts.nAt,opts.nc]);
-%     % ======================================================================== %
-    
+      
     % Residuals before rescaling (O'Donoghue et al, Section 5)
     % Use same normalization as O'Donoghue et al
     pk  = (At.'*x - b).*opts.scaleFactors.E;
@@ -38,15 +23,12 @@ if u.tau > 0   %% feasible problem
     dk  = (At*y + (v.x./u.tau) - c).*opts.scaleFactors.D;
     dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
     gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
-    
-    
+   
     if max([presi,dresi,gap]) < opts.relTol
         info.problem = 0;
-        stop = true;
+        stop         = true;
     end
-    
-    
-    
+   
 else % infeasible or unbounded problem?
     pinfIndex = b.'*u.y;  % index of certificating primal infesibility
     dinfIndex = -c.'*u.x; % index of certificating dual infesibility
@@ -62,15 +44,7 @@ else % infeasible or unbounded problem?
             stop = true;
         end
     end
-    if pinfIndex > 0   % primal infeasible
-        % ======================================================================== %
-        % Scaled variables
-        % GF: uncomment the first line if v is the unscaled multiplier, the
-        %     second one if v is the scaled multiplier
-        % dfeas    = norm(At*u.y+v.x./opts.rho,'fro');
-        % dfeas    = norm(At*u.y+v.x,'fro');
-        % dfeasTol = pinfIndex/opts.nb*opts.relTol;
-        % ======================================================================== %
+    if pinfIndex > 0  % primal infeasible
         % Original variables
         dfeas    = norm( (At*u.y+v.x).*opts.scaleFactors.D ,'fro');
         dfeasTol = pinfIndex/opts.nb_init/opts.scaleFactors.sc_b*opts.relTol;
@@ -90,8 +64,15 @@ end
 
 %progress message
 if opts.verbose && (iter == 1 || ~mod(iter,opts.dispIter) || stop)
-    fprintf('%5d | %7.2e | %7.2e | %9.2e | %9.2e | %8.2e |  %8.2e |\n',...
-        iter,presi,dresi,pcost,dcost,gap, toc(admmtime))
+    if ~isnan(presi)
+        fprintf('%5d | %7.2e | %7.2e | %9.2e | %9.2e | %8.2e |  %8.2e |\n',...
+            iter,presi,dresi,pcost,dcost,gap, toc(admmtime))
+    else
+        % for the purpose of alginment
+        fprintf('%5d | %8d | %8d | %9d | %9d | %8d |  %8.2e |\n',...
+            iter,presi,dresi,pcost,dcost,gap, toc(admmtime))
+    end
+        
 end
 
 % log information
