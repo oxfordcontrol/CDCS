@@ -28,8 +28,10 @@ zsvec = zeros(chstuff.totvars,1);          % svec format
 
 % Extract variables & scale solution back
 y(:) = (Y.y./Y.tau.*opts.scaleFactors.E1)./opts.scaleFactors.sc_c;
-zsvec(chstuff.usedvars) = accumarray(E,Y.v./Y.tau);
-zsvec(chstuff.usedvars) = (zsvec(chstuff.usedvars)./opts.scaleFactors.D1)./opts.scaleFactors.sc_c;
+%zsvec(chstuff.usedvars) = accumarray(E,Y.v./Y.tau);
+zsvec(chstuff.usedvars) = accumarray(E,opts.scaleFactors.E2.*Y.v./Y.tau);
+zsvec(chstuff.usedvars) = zsvec(chstuff.usedvars)./opts.scaleFactors.sc_c;
+%zsvec(chstuff.usedvars) = (zsvec(chstuff.usedvars)./opts.scaleFactors.D1)./opts.scaleFactors.sc_c;
 zmat = blockify(zmat,zsvec,K);
 ztemp = flatten(ztemp,zmat,0);
 

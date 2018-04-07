@@ -31,7 +31,7 @@ if u.tau > 0   %% feasible problem
     
     pk  = (A*x - b)./opts.scaleFactors.E1;
     presi = ( norm(pk,'fro')./(1+opts.nb_init) ) / opts.scaleFactors.sc_b;
-    dk  = (At*y + opts.scaleFactors.D1.*accumarray(E,opts.scaleFactors.E2.*u.v./u.tau) - c);
+    dk  = (At*y + opts.scaleFactors.D1.*accumarray(E,opts.scaleFactors.E2.*u.v./u.tau) - c)./opts.scaleFactors.D1;
     dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
     gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
  
