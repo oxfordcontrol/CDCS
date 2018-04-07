@@ -70,8 +70,13 @@ if opts.rescale
      
     D1(D1>maxScaleRowAt) = maxScaleRowAt;     % set upper bound
     D1(D1<minScaleRowAt) = 1;                 % set lower bound
-    At = bsxfun(@rdivide,At,D1);              % divide row i of At by D(i)
-    
+    if issparse(At)
+        nD = length(D1);
+        At = spdiags(1./D1,0,nD,nD)*At;
+    else
+        % Old code: with bsxfun
+        At = bsxfun(@rdivide,At,D1);              % divide row i of At by D(i)
+    end
     % norms of rows of [0 -I] 
     D2 = ones(length(Ech),1);       %% always maintain the membership of cones
     
@@ -84,7 +89,12 @@ if opts.rescale
     E1 = full(sqrt(sum(At.*At,1)));            
     E1(E1>maxScaleColAt) = maxScaleColAt;       % set upper bound
     E1(E1<minScaleColAt) = 1;                   % set lower bound
-    At = bsxfun(@rdivide,At,E1);                % divide col i of At by E(i)
+    if issparse(At)
+        nE = length(E1);
+        At = At*spdiags(1./E1.',0,nE,nE);
+    else
+        At = bsxfun(@rdivide,At,E1);                % divide col i of At by E(i)
+    end
     
     % cols of [D1H']
     %         [-D2I]
