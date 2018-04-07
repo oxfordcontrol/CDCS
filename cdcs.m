@@ -74,12 +74,6 @@ tstart = tic;
 opts = cdcsOpts;
 import cdcs_utils.*
 
-%% temporary use
-AtOld = At;
-bOld = b;
-cOld = c;
-KOld = K;
-
 %============================================
 % Setup
 %============================================
@@ -168,7 +162,6 @@ log.dres = zeros(opts.maxIter,1);
 
 admmtime = tic;
 for iter = 1:opts.maxIter
-    
     % Save current iterate for convergence test
     YOld = Y;
     
@@ -182,7 +175,7 @@ for iter = 1:opts.maxIter
     subTime(iter,2) = toc(conicProj);
     
     dualUpdate  = tic;
-    [Z,others] = updateZ(X,Y,Z,opts.rho,others);
+    [Z,others]  = updateZ(X,Y,Z,opts.rho,others);
     subTime(iter,3) = toc(dualUpdate);
     
     % log errors / check for convergence
@@ -209,21 +202,14 @@ info.dres    = log.dres(iter);             % terminal dual ADMM res
 info.log.pres     = log.pres(1:iter);      % log of residuals etc
 info.log.dres     = log.dres(1:iter); 
 info.log.cost     = log.cost(1:iter);  
-if any(strcmpi(opts.solver,{'hsde'}))
+if any(strcmpi(opts.solver,{'hsde','sos'}))
     info.log.gap     = log.gap(1:iter);
 end
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time
 info.time.cleanup = posttime;              % post-processing time
 info.time.total   = toc(tstart);           % total CPU time
-
 info.time.subiter = sum(subTime);          % time for each subiteration
-
-%% temporary use
-info.SeDuMiData.At = AtOld;
-info.SeDuMiData.b = bOld;
-info.SeDuMiData.c = cOld;
-info.SeDuMiData.K = KOld;
 
 % Print summary
 if opts.verbose
