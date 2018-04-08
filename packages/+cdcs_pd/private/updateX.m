@@ -18,7 +18,8 @@ if strcmpi(opts.solver,'primal')
     others.dual = y;
     
     %blockify E*x
-    Ex = X.vec(Ech);
+    %Ex = X.vec(Ech);  % modified by Yang 2018/02/24
+    Ex = x(Ech);       % this operation seems to be faster ...
     X.blk = blockify(X.blk,Ex,K);
     
 elseif strcmpi(opts.solver,'dual')

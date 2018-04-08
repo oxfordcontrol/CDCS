@@ -67,5 +67,33 @@ x(opts.usedvars) = xtemp.*tmpScale;
 z(opts.usedvars) = ztemp;
 
 
+%% check individual residual for the consensus constraint Hkx = x or zk = vk 
+    % added by Yang 09/03/2018
+    p = length(others.X);   % number of cliques
+    Xktemp = blockify(others.X,Y.x(E),others.K);
+    Xhtemp = blockify(others.X,Y.xh,others.K);
+    Zktemp = blockify(others.X,Z.xh,others.K);
+    Vktemp = blockify(others.X,Y.v,others.K);
+    cpres = zeros(p,2);
+    cdres = zeros(p,2);
+    pEig  = zeros(p,1);
+    dEig  = zeros(p,1);
+    for k = 1:p
+        cpres(k,1) = norm(Xktemp{k} - Xhtemp{k},'fro');
+        cpres(k,2) = cpres(k,1)./ max([norm(Xktemp{k},'fro'), norm(Xhtemp{k},'fro'),1]);
+        
+        cdres(k,1) = norm(Zktemp{k} - Vktemp{k},'fro');
+        cdres(k,2) = cdres(k,1)./ max([norm(Zktemp{k},'fro'), norm(Vktemp{k},'fro'),1]);
+        
+        pEig(k) = min(eig(Xktemp{k}));
+        dEig(k) = min(eig(Vktemp{k}));
+    end
+    info.cpres = max(cpres); % maximal primal consensus residual;
+    info.cdres = max(cdres); % maximal dual consensus residual;
+    
+    info.pEig = min(pEig);
+    info.dEig = min(dEig);
+
+
 % END FUNCTION
 end

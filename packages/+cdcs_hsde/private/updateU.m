@@ -14,7 +14,7 @@ function [u,others] =updateU(hatu,Y,v,others,K,rho)
     u.y = hatu.y - v.y;%./rho;
     u.v = hatu.v - v.v;%./rho;
     
-    % non-neggative variables
+    % non-negative variables
     u.tau = hatu.tau - v.kappa;%./rho;
     if u.tau < 0;
         u.tau = 0;

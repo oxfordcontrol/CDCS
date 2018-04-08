@@ -46,7 +46,9 @@ function u = solveInner(factors,E,v)
 
     if(isempty(useBuiltin))
         %default to look for CSparse code
-         useBuiltin = ~exist(['cs_ltsolve.' mexext],'file');  
+        % useBuiltin = ~exist(['cs_ltsolve.' mexext],'file');  
+        useBuiltin = ~exist(['+cdcs_utils',filesep,'cs_ltsolve.' mexext],'file');
+        useBuiltin = useBuiltin | ~exist(['+cdcs_utils',filesep,'cs_lsolve.' mexext],'file');
     end
     
     % Import functions
@@ -64,11 +66,12 @@ function u = solveInner(factors,E,v)
         si = factors.si;
         
         % First find v0 to solve system like M*u2 = v0
-        v01 = accumarray(E,v.v) + (At*v.y) + v.x;
+        %v01 = accumarray(E,v.v) + (At*v.y) + v.x;
         v02 = v.xh - v.v;
         
         % Solve system M*u2=v0 using factors
-        z = P.*(v01 + accumarray(E,v02)./2);
+        z = P.*(At*v.y + v.x + accumarray(E,v.v+v02./2));
+        %z = P.*(v01 + accumarray(E,v02)./2);
         d = A*z;
         ds= full(d(s,1));                       % permute
         if(useBuiltin) 
@@ -80,9 +83,10 @@ function u = solveInner(factors,E,v)
         
         % finish solve
         u.x  = z - P.*(At*p);
-        u.xh = (v02 + u.x(E))./2;
+        tmp = u.x(E);
+        u.xh = (v02 + tmp)./2;
         u.y  = v.y - A*u.x;
-        u.v  = v.v + u.xh - u.x(E);
+        u.v  = v.v + u.xh - tmp;
     else
         error('Unknown method')
     end

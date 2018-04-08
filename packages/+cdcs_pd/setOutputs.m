@@ -95,5 +95,19 @@ x(opts.usedvars) = xtemp;
 z(opts.usedvars) = ztemp;
 
 
+%% check individual residual for the consensus constraint Hkx = x or zk = vk 
+    % added by Yang 09/03/2018
+    p = length(X.blk);   % number of cliques
+    cres = zeros(p,2);
+    mEig = zeros(p,1);
+    for k = 1:p
+        cres(k,1) = norm(X.blk{k} - Y.blk{k},'fro');
+        cres(k,2) = cres(k,1)./ max([norm(X.blk{k},'fro'), norm(Y.blk{k},'fro'),1]);
+        
+        mEig(k) = min(eig(X.blk{k}));
+    end
+    info.cres = max(cres); % maximal consensus residual;
+    info.mEig = min(mEig);
+    
 % END FUNCTION
 end

@@ -34,10 +34,21 @@ if u.tau > 0   %% feasible problem
     dresi = ( norm(dk,'fro')./(1+opts.nc_init) ) / opts.scaleFactors.sc_c;
     gap = abs(pcost - dcost)/(1 + abs(pcost) + abs(dcost));
  
-    if max([presi,dresi,gap]) < opts.relTol
+    % residual for consensus variables
+    tmp = u.x(E);
+    cpres = norm(tmp - u.xh,'fro')./max([norm(tmp,'fro'),norm(u.xh,'fro'),1]);
+    cdres = norm(u.v - v.xh,'fro')./max([norm(u.v,'fro'),norm(v.xh,'fro'),1]);
+    
+    if max([presi,dresi,gap,cpres,cdres]) < opts.relTol
         info.problem = 0;
         stop = true;
     end
+    
+    
+%     if max([presi,dresi,gap]) < opts.relTol
+%         info.problem = 0;
+%         stop = true;
+%     end
     
     % adpative penalty?
     % YZ: remove adaptive penalty, hsde is independent of \rho
@@ -96,6 +107,9 @@ else % infeasible or unbounded problem?
     pcost = NaN;
     dcost = NaN;
     gap   = NaN;
+    
+    cpres = NaN;
+    cdres = NaN;
 end
 
 %progress message
@@ -110,6 +124,8 @@ if iter==1
     %cc = cell(opts.maxIter,1);
     log.dcost = zeros(opts.maxIter,1);
     log.gap   = zeros(opts.maxIter,1);
+    log.cpres  = zeros(opts.maxIter,1);
+    log.cdres  = zeros(opts.maxIter,1);
     %log = struct('pres',cc,'dres',cc,'cost',cc,'dcost',cc);
 end
 log.pres(iter)  = presi;
@@ -117,6 +133,9 @@ log.dres(iter)  = dresi;
 log.cost(iter)  = pcost;   %% use primal cost
 log.dcost(iter) = dcost;
 log.gap(iter)   = gap;
+
+log.cpres(iter) = cpres;
+log.cdres(iter) = cdres;
 
 % end main
 end

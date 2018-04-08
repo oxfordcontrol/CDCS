@@ -30,6 +30,7 @@ if isempty(initVars)
     Z.kappa = 0;
     
     others.X    = cdcs_utils.makeConeVariables(K);% cone variables: matrix version
+    others.K    = K;                       % 
 
 else
     % initialized vectorized variables with used input

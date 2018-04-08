@@ -74,7 +74,7 @@ tstart = tic;
 opts = cdcsOpts;
 import cdcs_utils.*
 
-%% temporary use
+% %% temporary use
 AtOld = At;
 bOld = b;
 cOld = c;
@@ -211,6 +211,8 @@ info.log.dres     = log.dres(1:iter);
 info.log.cost     = log.cost(1:iter);  
 if any(strcmpi(opts.solver,{'hsde'}))
     info.log.gap     = log.gap(1:iter);
+    info.log.cpres   = log.cpres(1:iter);
+    info.log.cdres   = log.cdres(1:iter);
 end
 info.time.setup   = proctime;              % setup time
 info.time.admm    = admmtime;              % ADMM time

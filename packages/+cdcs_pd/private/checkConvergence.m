@@ -17,6 +17,7 @@ end
 
 % Import functions
 import cdcs_utils.flatten
+import cdcs_utils.blockify
 
 % Extract some variables
 Ex = flatten(Y.vec,X.blk);
