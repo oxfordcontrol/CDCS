@@ -232,9 +232,3 @@ TSWLatexianTemp*
 
 # Kile
 *.backup
-
-# KBibTeX
-*~[0-9]*
-packages/+cdcs_hsde/private/checkConvergence.m
-*.m
-include/UFget/matrices/UFstats_old.csv
