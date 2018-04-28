@@ -83,8 +83,8 @@ if(nargin >= 5)
 end
 
 % Checks on specified solver type and method
-if ~any(strcmpi(opts.solver,{'primal','dual','hsde','sos'}))
-    error('Unknown opts.solver. Please use "primal", "dual", "hsde" or "sos".')
+if ~any(strcmpi(opts.solver,{'primal','dual','hsde','sos','hocp'}))
+    error('Unknown opts.solver. Please use "primal", "dual", "hsde", "sos" or "hocp".')
 end
 
 % Print nice welcoming header
@@ -142,7 +142,7 @@ if opts.verbose
     fprintf('Second-order cones     : %i (max. size: %i)\n',length(find(K.q ~=0)),max(K.q));
     fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(find(K.s ~=0)),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
-    if any(strcmpi(opts.solver,{'primal','dual','hsde'}))
+    if any(strcmpi(opts.solver,{'primal','dual','hsde','hocp'}))
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));  
     else
     fprintf('Nonorthogonal dimension: %i                \n',opts.sos.NonOrth);

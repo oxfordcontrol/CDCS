@@ -16,6 +16,9 @@ switch lower(opts.solver)
     case {'sos'}
         [x,y,z,info,opts] = cdcs_sos.setOutputs(X,Y,Z,Kold,info,opts);
         
+    case {'hocp'}
+        [x,y,z,info,opts] = cdcs_hocp.setOutputs(X,Y,Z,others,Kold,c,Ech,chstuff,info,opts);
+        
     otherwise
         error('Unknown value for ''options.solver''.')
             

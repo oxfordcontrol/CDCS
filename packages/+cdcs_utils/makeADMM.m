@@ -19,6 +19,10 @@ switch lower(opts.solver)
         [updateX,updateY,updateZ,checkConvergence] = ...
             cdcs_sos.makeADMM(At,b,c,K,opts);
         
+    case {'hocp'}
+        [updateX,updateY,updateZ,checkConvergence] = ...
+            cdcs_hocp.makeADMM(At,b,c,K,Ech,opts);
+        
     otherwise
         error('Unknown value for ''options.solver''.')
             

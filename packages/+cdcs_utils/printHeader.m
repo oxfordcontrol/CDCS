@@ -6,7 +6,7 @@ function [header,myline1,myline2] = printHeader(opts)
 
 switch lower(opts.solver)
    
-    case {'primal', 'dual'}
+    case {'primal', 'dual','hocp'}
         [header,myline1,myline2] = cdcs_pd.printHeader;
         
     case {'hsde'}

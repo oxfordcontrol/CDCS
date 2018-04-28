@@ -16,6 +16,9 @@ switch lower(opts.solver)
     case {'sos'}
         [X,Y,Z,others] = cdcs_sos.makeVariables(K,initVars,opts);    
         
+    case {'hocp'}
+        [X,Y,Z,others] = cdcs_hocp.makeVariables(K,initVars,opts);    
+        
     otherwise
         error('Unknown value for ''options.solver''.')
             

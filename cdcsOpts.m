@@ -64,3 +64,9 @@ options.KKTfact    = 'blk';     % Options for KKT systems
 % the following is for self-dual embedding
 options.alpha      = 1.8;       % over relaxation, must lie in (0,2); 1.8 is used in SCS
 
+% the following is used for hocp
+options.partion    = [];        % block partition
+options.NoP        = 10;        % Number of partition, by default
+
+
+
