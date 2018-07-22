@@ -24,6 +24,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %   options.solver = 'primal'        : solve the problem in primal standard form
 %   options.solver = 'dual'          : solve the problem in dual standard form
 %   options.solver = 'sos'           : solve the problem arising from Sum-of-squares programs
+%   options.solver = 'rank'          : solve the problem with rank minimization
 %
 % The chordal decomposition can be carried out in two ways, specified by the
 % "chordalize" option:
@@ -83,8 +84,8 @@ if(nargin >= 5)
 end
 
 % Checks on specified solver type and method
-if ~any(strcmpi(opts.solver,{'primal','dual','hsde','sos'}))
-    error('Unknown opts.solver. Please use "primal", "dual", "hsde" or "sos".')
+if ~any(strcmpi(opts.solver,{'primal','dual','hsde','sos','rankp','rankd'}))
+    error('Unknown opts.solver. Please use "primal", "dual", "hsde", "sos", "rankp","rankd".')
 end
 
 % Print nice welcoming header
@@ -142,7 +143,7 @@ if opts.verbose
     fprintf('Second-order cones     : %i (max. size: %i)\n',length(find(K.q ~=0)),max(K.q));
     fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(find(K.s ~=0)),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
-    if any(strcmpi(opts.solver,{'primal','dual','hsde'}))
+    if any(strcmpi(opts.solver,{'primal','dual','hsde','rankp','rankd'}))
     fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));  
     else
     fprintf('Nonorthogonal dimension: %i                \n',opts.sos.NonOrth);
@@ -227,10 +228,11 @@ if opts.verbose
     fprintf(' Avg. affine proj (s) : %11.4e\n',info.time.subiter(1)./iter)
     fprintf(' Cleanup time (s)     : %11.4e\n',posttime)
     fprintf(' Total time   (s)     : %11.4e\n',info.time.total)
+    if any(strcmpi(opts.solver,{'rankp'}))
+    fprintf(' maximum rank       : %i (%i)\n',max(info.rankPSD_v2),max(info.rankPSD_v1));
+    end
     fprintf(myline1)
 end
-
-
 end
 
 

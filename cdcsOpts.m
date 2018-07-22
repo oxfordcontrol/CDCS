@@ -64,3 +64,6 @@ options.KKTfact    = 'blk';     % Options for KKT systems
 % the following is for self-dual embedding
 options.alpha      = 1.8;       % over relaxation, must lie in (0,2); 1.8 is used in SCS
 
+% for dual SDP with rank minimization
+options.rankPenalty   = 0;
+

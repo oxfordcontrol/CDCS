@@ -1,9 +1,12 @@
-function X = projectK(X,K,useDual)
+function X = projectK(X,K,useDual,rankPenalty)
 
 %project a vector onto a cone K defined in SEDUMI format
 
 if(nargin < 3)
     useDual = 0;
+end
+if(nargin < 4)
+    rankPenalty = false;   % involve rank constraint
 end
 
 if(useDual)
@@ -56,10 +59,18 @@ end
 %project everything onto the PSD cone (self-dual)
 nPosEigs = 0;
 if (isfield(K,'s') && any(K.s))
-    for i = (1:length(K.s))
-        [X{blockIdx},temp] = projectPSD(X{blockIdx});  %self dual cone
-        nPosEigs = nPosEigs + temp;
-        blockIdx = blockIdx + 1;
+    if rankPenalty == false        %% no rank penalty
+        for i = (1:length(K.s))
+            [X{blockIdx},temp] = projectPSD(X{blockIdx});  %self dual cone
+            nPosEigs = nPosEigs + temp;
+            blockIdx = blockIdx + 1;
+        end
+    else                          %% have rank penalty
+        for i = (1:length(K.s))
+            [X{blockIdx},temp] = projectPSDrank(X{blockIdx},rankPenalty);  %self dual cone
+            nPosEigs = nPosEigs + temp;
+            blockIdx = blockIdx + 1;
+        end
     end
 end
 
@@ -117,6 +128,29 @@ function [S,nPosEigs] = projectPSD(S)
     [U,E] = eig(S);
     ind = diag(E)>0;
     UsE = U(:,ind)*sqrt(E(ind,ind));
+    S   = UsE*UsE.';
+    nPosEigs = nnz(ind);   
+end
+
+% POSITIVE SEMIDEFINITE CONE  -- one-sided soft thresholding
+function [S,nPosEigs] = projectPSDrank(S,tau)
+    %scalar case
+    if(numel(S) == 1)
+        nPosEigs = double(S > 0);
+        if abs(S) < tau || S < -tau
+            S = 0;
+        else
+            S = S -t;
+        end
+        %S = max(0,S);
+        return;
+    end
+    % matrix case
+    S = S./2;
+    S = S+S.';
+    [U,E] = eig(S);
+    ind = (diag(E) - tau) > 0;
+    UsE = U(:,ind)*sqrt(E(ind,ind) -tau*eye(nnz(ind)));
     S   = UsE*UsE.';
     nPosEigs = nnz(ind);   
 end

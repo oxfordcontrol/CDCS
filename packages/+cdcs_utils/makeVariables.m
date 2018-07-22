@@ -15,6 +15,9 @@ switch lower(opts.solver)
         
     case {'sos'}
         [X,Y,Z,others] = cdcs_sos.makeVariables(K,initVars,opts);    
+       
+    case {'rankp','rankd'}
+        [X,Y,Z,others] = cdcs_rank.makeVariables(K,initVars,opts);  
         
     otherwise
         error('Unknown value for ''options.solver''.')

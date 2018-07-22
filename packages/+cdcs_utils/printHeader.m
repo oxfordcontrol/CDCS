@@ -15,6 +15,9 @@ switch lower(opts.solver)
     case {'sos'}
         [header,myline1,myline2] = cdcs_sos.printHeader;
         
+    case {'rankp', 'rankd'}
+        [header,myline1,myline2] = cdcs_rank.printHeader;
+        
     otherwise
         error('Unknown value for ''options.solver''.')
             

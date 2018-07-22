@@ -16,6 +16,9 @@ switch lower(opts.solver)
     case {'sos'}
         [At,b,c,K,Ech,chstuff,opts] = cdcs_sos.preprocess(At,b,c,K,opts);
         
+    case {'rankp','rankd'}
+        [At,b,c,K,Ech,chstuff,opts] = cdcs_rank.preprocess(At,b,c,K,opts);
+        
     otherwise
         error('Unknown value for ''options.solver''.')           
 end
