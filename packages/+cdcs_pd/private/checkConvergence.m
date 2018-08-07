@@ -70,21 +70,21 @@ end
 % Update penalty parameter
 if opts.adaptive
     resRat = pres/dres;
-    if resRat >= opts.mu
+    if resRat >= opts.nu
         itPinf = itPinf+1;
         itDinf = 0;
         if itPinf >= opts.rhoIt
             % ratio of pinf and dinf remained large for long => rescale rho
             itPinf = 0;
-            opts.rho = min(opts.rho*opts.tau, opts.rhoMax);
+            opts.rho = min(opts.rho*opts.mu, opts.rhoMax);
         end
-    elseif 1/resRat >= opts.mu
+    elseif 1/resRat >= opts.nu
         itDinf = itDinf+1;
         itPinf = 0;
         if itDinf >= opts.rhoIt
             % ratio of pinf and dinf remained small for long => rescale rho
             itDinf = 0;
-            opts.rho = max(opts.rho/opts.tau, opts.rhoMin);
+            opts.rho = max(opts.rho/opts.mu, opts.rhoMin);
         end
     end
 end
