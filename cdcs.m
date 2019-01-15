@@ -13,7 +13,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %   (P)   s.t. Ax = b,                  (D)     s.t. A^Ty + z = c
 %         x \in K                               z \in K*
 %
-% where A,b and c are the problem data and K is the cone (K* is the dual cone).
+% where A, b and c are the problem data and K is the cone (K* is the dual cone).
 % CDCS supports the following cones: Free, Linear, second-order,
 % Semi-definite, called as called K.f, K.l, K.q, and K.s.
 %
