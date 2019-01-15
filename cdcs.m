@@ -15,7 +15,7 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %
 % where A,b and c are the problem data and K is the cone (K* is the dual cone).
 % CDCS supports the following cones: Free, Linear, second-order,
-% Semi-definite, called as called K.f, K.l, K.q, and K.s.
+% Semi-definite, called K.f, K.l, K.q, and K.s.
 %
 % The standard form to be solved is specified by the "solver" field of the
 % options structure:
