@@ -35,11 +35,11 @@ function [x,y,z,info] = cdcs(At,b,c,K,userOpts,initVars)
 %
 % The output structure 'info' contains the following information:
 %
-% info.problem: - 0: CDCS terminated succesfully 
+% info.problem: - 0: CDCS terminated successfully 
 %               - 1: primal infeasibility detected
 %               - 2: dual infeasibility detected
 %               - 3: maximum number of iterations reached
-%               - 4: the ADMM iterations terminated succesfully, but the positive 
+%               - 4: the ADMM iterations terminated successfully, but the positive 
 %                    matrix completion algorithm threw an error
 % info.iter: number of iterations
 % info.cost: terminal cost
