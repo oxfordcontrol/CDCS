@@ -143,13 +143,13 @@ if opts.verbose
     fprintf('Semidefinite cones     : %i (max. size: %i)\n',length(find(K.s ~=0)),max(K.s));
     fprintf('Affine constraints     : %i                \n',opts.m);
     if any(strcmpi(opts.solver,{'primal','dual','hsde'}))
-    fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));  
+    fprintf('Consensus constraints  : %i                \n',sum(accumarray(Ech,1)));
     else
     fprintf('Nonorthogonal dimension: %i                \n',opts.sos.NonOrth);
     end
     fprintf(myline1);
     fprintf(header);
-    fprintf(myline2);    
+    fprintf(myline2);
 end
 
 %============================================
@@ -164,20 +164,20 @@ admmtime = tic;
 for iter = 1:opts.maxIter
     % Save current iterate for convergence test
     YOld = Y;
-    
+
     % Update block variables
     linearProj = tic;
     [X,others] = updateX(X,Y,Z,opts.rho,others);
     subTime(iter,1) = toc(linearProj);
-    
+
     conicProj  = tic;
     [Y,others] = updateY(X,Y,Z,opts.rho,others);
     subTime(iter,2) = toc(conicProj);
-    
+
     dualUpdate  = tic;
     [Z,others]  = updateZ(X,Y,Z,opts.rho,others);
     subTime(iter,3) = toc(dualUpdate);
-    
+
     % log errors / check for convergence
     [stop,info,log,opts] = checkConvergence(X,Y,Z,YOld,others,iter,admmtime,opts,log);
     if stop
@@ -200,8 +200,8 @@ info.cost    = log.cost(iter);             % terminal cost
 info.pres    = log.pres(iter);             % terminal primal ADMM res
 info.dres    = log.dres(iter);             % terminal dual ADMM res
 info.log.pres     = log.pres(1:iter);      % log of residuals etc
-info.log.dres     = log.dres(1:iter); 
-info.log.cost     = log.cost(1:iter);  
+info.log.dres     = log.dres(1:iter);
+info.log.cost     = log.cost(1:iter);
 if any(strcmpi(opts.solver,{'hsde','sos'}))
     info.log.gap     = log.gap(1:iter);
 end
