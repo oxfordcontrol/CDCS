@@ -186,6 +186,16 @@ for iter = 1:opts.maxIter
 end
 admmtime = toc(admmtime);
 
+%===========================================
+% Phase 1: polish via newton's step
+%============================================
+if opts.polish == true
+    import cdcs_ipm.*
+    polishtime = tic;
+    [x,y,z,info,opts] = polish(X,Y,Z,others,Kold,At,b,c,Ech,chstuff,info,opts);
+    polishtime = toc(postpolishtimetime);
+end
+
 %============================================
 % Outputs
 %============================================
