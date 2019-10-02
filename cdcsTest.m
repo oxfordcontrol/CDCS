@@ -30,6 +30,7 @@ tsetup = toc(tsetup);
 fprintf('done in %.2f seconds. \n',tsetup);
 
 % solution by admm
+opts.polish = 0;
 opts.solver = 'primal';
 cdcs(At,b,c,K,opts);
 opts.solver = 'dual';
